@@ -5,22 +5,24 @@ import { useDesktop } from "../contexts/DesktopContext";
 import { useWindows } from "../contexts/WindowContext";
 import SpotifyApp from "./apps/SpotifyApp";
 import CodeEditorApp from "./apps/CodeEditorApp";
+
 export default function DesktopIcons() {
   const { desktopItems, createFolder, deleteItem, renameItem, moveItem } =
     useDesktop();
   const { openWindow } = useWindows();
   const [contextMenu, setContextMenu] = useState(null);
   const [isRenaming, setIsRenaming] = useState(null);
+
   useEffect(() => {
     const handleEsc = (e) => {
       if (e.key === "Escape") {
-        console.log("ESC pressed");
         setContextMenu(null);
       }
     };
     window.addEventListener("keydown", handleEsc);
     return () => window.removeEventListener("keydown", handleEsc);
   }, []);
+
   const handleRightClick = (e, itemId) => {
     e.preventDefault();
     setContextMenu({ x: e.clientX, y: e.clientY, itemId });
@@ -36,7 +38,7 @@ export default function DesktopIcons() {
           openWindow("code", "VS Code", <CodeEditorApp />);
           break;
         case "github":
-          window.open("https://github.com", "_blank");
+          window.open("https://github.com/Saxena-Shivam", "_blank");
           break;
         case "spotify":
           openWindow("spotify", "Spotify", <SpotifyApp />);
@@ -45,7 +47,6 @@ export default function DesktopIcons() {
           break;
       }
     } else if (item.type === "folder") {
-      // Open folder in file manager
       openWindow(
         "files",
         "Files",
@@ -72,7 +73,12 @@ export default function DesktopIcons() {
           <div
             key={item.id}
             className="absolute flex flex-col items-center cursor-pointer group select-none"
-            style={{ left: item.position.x - 32, top: item.position.y }}
+            style={{
+              left: item.position.x - 32,
+              top: item.position.y,
+              width: 80,
+              zIndex: 10,
+            }}
             onDoubleClick={() => handleDoubleClick(item)}
             onContextMenu={(e) => handleRightClick(e, item.id)}
             draggable
@@ -99,7 +105,7 @@ export default function DesktopIcons() {
               <input
                 type="text"
                 defaultValue={item.name}
-                className="text-white text-xs mt-2 text-center max-w-20 bg-black/50 rounded px-1"
+                className="text-white text-xs mt-4 text-center max-w-20 bg-black/50 rounded px-1"
                 onBlur={(e) => {
                   renameItem(item.id, e.target.value);
                   setIsRenaming(null);
@@ -113,7 +119,7 @@ export default function DesktopIcons() {
                 autoFocus
               />
             ) : (
-              <span className="text-white text-xs mt-2 text-center max-w-20 group-hover:text-blue-200 transition-colors drop-shadow-lg">
+              <span className="text-white text-xs mt-4 text-center max-w-20 group-hover:text-blue-200 transition-colors drop-shadow-lg">
                 {item.name}
               </span>
             )}

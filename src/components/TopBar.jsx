@@ -1,6 +1,4 @@
-"use client";
-
-import { useState, useEffect, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import {
   Wifi,
   Volume2,
@@ -15,12 +13,14 @@ import SettingsApp from "./apps/SettingsApp";
 
 export default function TopBar({ currentTime, onShutdown, onLock }) {
   const [showPowerMenu, setShowPowerMenu] = useState(false);
+  const [showStatusMenu, setShowStatusMenu] = useState(false);
+  const [batteryLevel, setBatteryLevel] = useState(76); // Example: start at 76%
   const { openWindow } = useWindows();
   const powerMenuRef = useRef(null);
+  const statusMenuRef = useRef(null);
 
-  // Close dropdown when clicking outside
+  // Close dropdowns when clicking outside
   useEffect(() => {
-    if (!showPowerMenu) return;
     function handleClick(event) {
       if (
         powerMenuRef.current &&
@@ -28,10 +28,24 @@ export default function TopBar({ currentTime, onShutdown, onLock }) {
       ) {
         setShowPowerMenu(false);
       }
+      if (
+        statusMenuRef.current &&
+        !statusMenuRef.current.contains(event.target)
+      ) {
+        setShowStatusMenu(false);
+      }
     }
     document.addEventListener("mousedown", handleClick);
     return () => document.removeEventListener("mousedown", handleClick);
-  }, [showPowerMenu]);
+  }, []);
+
+  // Simulate battery charging
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setBatteryLevel((prev) => (prev < 100 ? prev + 1 : 100));
+    }, 2000); // Increase every 2 seconds
+    return () => clearInterval(interval);
+  }, []);
 
   const formatTime = (date) => {
     return date.toLocaleTimeString("en-US", {
@@ -66,11 +80,40 @@ export default function TopBar({ currentTime, onShutdown, onLock }) {
       </div>
 
       <div className="flex items-center space-x-1 relative">
-        <div className="flex items-center space-x-1 px-2 py-1 rounded hover:bg-white/10 transition-colors">
+        {/* Status Section */}
+        <div
+          className="flex items-center space-x-1 px-2 py-1 rounded hover:bg-white/10 transition-colors cursor-pointer"
+          onClick={() => setShowStatusMenu((v) => !v)}
+          ref={statusMenuRef}
+        >
           <Wifi className="w-4 h-4" />
           <Volume2 className="w-4 h-4" />
           <Battery className="w-4 h-4" />
         </div>
+
+        {/* Status Dropdown */}
+        {showStatusMenu && (
+          <div
+            className="absolute right-16 top-8 bg-gray-800 border border-gray-600 rounded-lg shadow-xl py-2 min-w-56 z-50 animate-slideIn"
+            ref={statusMenuRef}
+          >
+            <div className="px-4 py-2 border-b border-gray-600 flex items-center space-x-2">
+              <Wifi className="w-4 h-4" />
+              <span>Wi-Fi: Connected</span>
+            </div>
+            <div className="px-4 py-2 border-b border-gray-600 flex items-center space-x-2">
+              <Volume2 className="w-4 h-4" />
+              <span>Volume: 80%</span>
+            </div>
+            <div className="px-4 py-2 flex items-center space-x-2">
+              <Battery className="w-4 h-4" />
+              <span>
+                Battery: {batteryLevel}%{" "}
+                {batteryLevel < 100 ? "(Charging...)" : "(Full)"}
+              </span>
+            </div>
+          </div>
+        )}
 
         {/* Settings button in top bar */}
         <button
