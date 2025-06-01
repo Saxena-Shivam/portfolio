@@ -1,5 +1,4 @@
 "use client";
-
 import { useWindows } from "../contexts/WindowContext.jsx";
 import CalculatorApp from "./apps/CalculatorApp.jsx";
 import FileManagerApp from "./apps/FileManagerApp.jsx";
@@ -15,7 +14,8 @@ import GitHubApp from "./apps/GitHubApp.jsx";
 import SettingsApp from "./apps/SettingsApp.jsx";
 import AboutApp from "./apps/AboutApp";
 import ChromeApp from "./apps/ChromeApp.jsx";
-export default function Sidebar() {
+
+export default function Sidebar({ onShowAllApps }) {
   const { openWindow } = useWindows();
 
   const apps = [
@@ -25,12 +25,12 @@ export default function Sidebar() {
       icon: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/chrome/chrome-original.svg",
       component: <ChromeApp />,
     },
-    {
-      id: "calculator",
-      name: "Calculator",
-      icon: "🧮",
-      component: <CalculatorApp />,
-    },
+    // {
+    //   id: "calculator",
+    //   name: "Calculator",
+    //   icon: "🧮",
+    //   component: <CalculatorApp />,
+    // },
     {
       id: "files",
       name: "Files",
@@ -61,36 +61,36 @@ export default function Sidebar() {
       icon: "📧",
       component: <MailApp />,
     },
-    {
-      id: "camera",
-      name: "Camera",
-      icon: "📷",
-      component: <CameraApp />,
-    },
+    // {
+    //   id: "camera",
+    //   name: "Camera",
+    //   icon: "📷",
+    //   component: <CameraApp />,
+    // },
     {
       id: "about",
       name: "About",
       icon: "👤",
       component: <AboutApp />,
     },
+    {
+      id: "text-editor",
+      name: "Text Editor",
+      icon: "📝",
+      component: <TextEditorApp />,
+    },
     // {
-    //   id: "text-editor",
-    //   name: "Text Editor",
-    //   icon: "📝",
-    //   component: <TextEditorApp />,
+    //   id: "image-viewer",
+    //   name: "Images",
+    //   icon: "🖼️",
+    //   component: <ImageViewerApp />,
     // },
-    {
-      id: "image-viewer",
-      name: "Images",
-      icon: "🖼️",
-      component: <ImageViewerApp />,
-    },
-    {
-      id: "calendar",
-      name: "Calendar",
-      icon: "📅",
-      component: <CalendarApp />,
-    },
+    // {
+    //   id: "calendar",
+    //   name: "Calendar",
+    //   icon: "📅",
+    //   component: <CalendarApp />,
+    // },
     {
       id: "github",
       name: "GitHub",
@@ -110,13 +110,7 @@ export default function Sidebar() {
       {apps.map((app) => (
         <button
           key={app.id}
-          onClick={() => {
-            if (app.action) {
-              app.action();
-            } else if (app.component) {
-              openWindow(app.id, app.name, app.component);
-            }
-          }}
+          onClick={() => openWindow(app.id, app.name, app.component)}
           className="w-12 h-12 bg-white/5 hover:bg-white/15 rounded-xl flex items-center justify-center transition-all duration-200 hover:scale-110 group border border-white/10"
           title={app.name}
         >
@@ -131,6 +125,25 @@ export default function Sidebar() {
           )}
         </button>
       ))}
+      {/* Show Applications Button */}
+      <button
+        onClick={onShowAllApps}
+        className="w-12 h-12 mt-auto mb-2 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center transition-all duration-200 hover:scale-110 border border-white/10"
+        title="Show Applications"
+      >
+        {/* 3x3 grid icon */}
+        <svg width="24" height="24" fill="currentColor" className="text-white">
+          <circle cx="5" cy="5" r="2" />
+          <circle cx="12" cy="5" r="2" />
+          <circle cx="19" cy="5" r="2" />
+          <circle cx="5" cy="12" r="2" />
+          <circle cx="12" cy="12" r="2" />
+          <circle cx="19" cy="12" r="2" />
+          <circle cx="5" cy="19" r="2" />
+          <circle cx="12" cy="19" r="2" />
+          <circle cx="19" cy="19" r="2" />
+        </svg>
+      </button>
     </div>
   );
 }
