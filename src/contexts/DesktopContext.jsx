@@ -44,6 +44,10 @@ export function DesktopProvider({ children }) {
     },
   ]);
 
+  // Wallpaper state (default to wallpaper1.avif)
+  const [wallpaper, setWallpaper] = useState(
+    `/image/wallpaper${Math.floor(Math.random() * 10) + 1}.avif`
+  );
   const createFolder = (name, position) => {
     const newFolder = {
       id: `folder-${Date.now()}`,
@@ -93,6 +97,8 @@ export function DesktopProvider({ children }) {
         deleteItem,
         renameItem,
         moveItem,
+        wallpaper, // Provide wallpaper
+        setWallpaper, // Provide setWallpaper
       }}
     >
       {children}

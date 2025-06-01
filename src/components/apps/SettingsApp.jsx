@@ -11,19 +11,28 @@ import {
   Palette,
   Cpu,
 } from "lucide-react";
+import { useDesktop } from "../../contexts/DesktopContext";
 
 export default function SettingsApp() {
   const [activeSection, setActiveSection] = useState("display");
   const [settings, setSettings] = useState({
     brightness: 75,
     volume: 80,
-    wallpaper: "default",
     theme: "dark",
     language: "en",
     timezone: "PST",
     notifications: true,
     autoUpdate: true,
   });
+
+  // Get wallpaper and setWallpaper from context
+  const { wallpaper, setWallpaper } = useDesktop();
+
+  // List of wallpaper image filenames (change count as needed)
+  const wallpaperImages = Array.from(
+    { length: 10 },
+    (_, i) => `/image/wallpaper${i + 1}.avif`
+  );
 
   const sections = [
     { id: "display", name: "Display", icon: Monitor },
@@ -208,23 +217,24 @@ export default function SettingsApp() {
                   Wallpaper
                 </label>
                 <div className="grid grid-cols-4 gap-4">
-                  {["default", "nature", "abstract", "minimal"].map(
-                    (wallpaper) => (
-                      <button
-                        key={wallpaper}
-                        onClick={() => updateSetting("wallpaper", wallpaper)}
-                        className={`aspect-video border-2 rounded-lg bg-gradient-to-br from-purple-500 to-blue-500 transition-colors ${
-                          settings.wallpaper === wallpaper
-                            ? "border-blue-500"
-                            : "border-gray-200 hover:border-gray-300"
-                        }`}
-                      >
-                        <div className="w-full h-full flex items-center justify-center text-white text-xs capitalize">
-                          {wallpaper}
-                        </div>
-                      </button>
-                    )
-                  )}
+                  {wallpaperImages.map((img, idx) => (
+                    <button
+                      key={img}
+                      onClick={() => setWallpaper(img)}
+                      className={`aspect-video border-2 rounded-lg overflow-hidden transition-colors ${
+                        wallpaper === img
+                          ? "border-blue-500 ring-2 ring-blue-300"
+                          : "border-gray-200 hover:border-gray-300"
+                      }`}
+                      style={{ padding: 0 }}
+                    >
+                      <img
+                        src={img}
+                        alt={`Wallpaper ${idx + 1}`}
+                        className="w-full h-full object-cover"
+                      />
+                    </button>
+                  ))}
                 </div>
               </div>
             </div>

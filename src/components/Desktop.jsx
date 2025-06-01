@@ -6,7 +6,20 @@ import Sidebar from "./Sidebar";
 import DesktopIcons from "./DesktopIcons";
 import WindowManager from "./WindowManager";
 import { WindowProvider } from "../contexts/WindowContext";
-import { DesktopProvider } from "../contexts/DesktopContext";
+import { DesktopProvider, useDesktop } from "../contexts/DesktopContext";
+
+// Component to render the desktop background using wallpaper from context
+function DesktopBackground() {
+  const { wallpaper } = useDesktop();
+  return (
+    <div
+      className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+      style={{
+        backgroundImage: `url(${wallpaper})`,
+      }}
+    />
+  );
+}
 
 export default function Desktop({ onShutdown, onLock }) {
   const [currentTime, setCurrentTime] = useState(new Date());
@@ -24,12 +37,7 @@ export default function Desktop({ onShutdown, onLock }) {
       <WindowProvider>
         <div className="h-screen w-screen overflow-hidden relative select-none">
           {/* Desktop Background */}
-          <div
-            className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-            style={{
-              backgroundImage: `linear-gradient(135deg, #667eea 0%, #764ba2 100%)`,
-            }}
-          />
+          <DesktopBackground />
 
           {/* Desktop Overlay */}
           <div className="absolute inset-0 bg-black/10" />
