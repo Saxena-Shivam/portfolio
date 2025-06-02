@@ -21,6 +21,7 @@ import GitHubApp from "./apps/GitHubApp";
 import AboutApp from "./apps/AboutApp";
 import ChromeApp from "./apps/ChromeApp";
 import Sidebar from "./Sidebar";
+import DesktopBackground from "./DesktopBackground";
 const allApps = [
   {
     id: "chrome",
@@ -170,7 +171,7 @@ function DesktopContent({ currentTime, onShutdown, onLock }) {
     <div className="h-screen w-screen overflow-hidden relative select-none pb-0">
       {/* Desktop Background */}
       {/* You can keep your background here if you want */}
-      {/* <DesktopBackground /> */}
+      <DesktopBackground />
 
       {/* Top Bar */}
       <TopBar

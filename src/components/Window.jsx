@@ -68,12 +68,12 @@ export default function Window({ window }) {
   if (window.isMaximized || isMobile) {
     windowStyle = {
       position: "fixed",
-      top: isMobile ? 0 : 32,
-      left: isMobile ? 0 : 64,
+      top: 0,
+      left: 0,
       right: 0,
-      bottom: isMobile ? 64 : 0, // leave space for mobile bottom bar
-      width: isMobile ? "100vw" : "calc(100vw - 64px)",
-      height: isMobile ? "100vh" : "calc(100vh - 32px)",
+      bottom: 0,
+      width: "100vw",
+      height: "100vh",
       zIndex: window.zIndex,
       maxWidth: "100vw",
       maxHeight: "100vh",
@@ -95,7 +95,6 @@ export default function Window({ window }) {
       maxHeight: "100vh",
     };
   }
-
   return (
     <div
       ref={windowRef}
