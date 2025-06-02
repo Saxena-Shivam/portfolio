@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Monitor,
   Volume2,
@@ -16,7 +16,7 @@ import { useDesktop } from "../../contexts/DesktopContext";
 export default function SettingsApp() {
   const [activeSection, setActiveSection] = useState("display");
   const [settings, setSettings] = useState({
-    brightness: 75,
+    brightness: 100, // Default brightness 100
     volume: 80,
     theme: "dark",
     language: "en",
@@ -49,6 +49,18 @@ export default function SettingsApp() {
     setSettings((prev) => ({ ...prev, [key]: value }));
   };
 
+  // Actual brightness control
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      document.body.style.filter = `brightness(${settings.brightness}%)`;
+    }
+    return () => {
+      if (typeof window !== "undefined") {
+        document.body.style.filter = "";
+      }
+    };
+  }, [settings.brightness]);
+
   return (
     <div className="h-full bg-white flex">
       {/* Sidebar */}
@@ -79,7 +91,6 @@ export default function SettingsApp() {
             <h3 className="text-xl font-semibold text-gray-800 mb-6">
               Display Settings
             </h3>
-
             <div className="space-y-6">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -99,7 +110,6 @@ export default function SettingsApp() {
                   {settings.brightness}%
                 </div>
               </div>
-
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Resolution
@@ -110,7 +120,6 @@ export default function SettingsApp() {
                   <option>1440 x 900</option>
                 </select>
               </div>
-
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Orientation
@@ -131,6 +140,15 @@ export default function SettingsApp() {
                   </label>
                 </div>
               </div>
+              {/* Display Pages */}
+              <div className="mt-8">
+                <h4 className="font-medium text-gray-800 mb-2">Advanced</h4>
+                <ul className="list-disc list-inside text-sm text-gray-600 space-y-1">
+                  <li>Night light</li>
+                  <li>Color calibration</li>
+                  <li>Multiple displays</li>
+                </ul>
+              </div>
             </div>
           </div>
         )}
@@ -140,7 +158,6 @@ export default function SettingsApp() {
             <h3 className="text-xl font-semibold text-gray-800 mb-6">
               Sound Settings
             </h3>
-
             <div className="space-y-6">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -160,7 +177,6 @@ export default function SettingsApp() {
                   {settings.volume}%
                 </div>
               </div>
-
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Output Device
@@ -171,7 +187,6 @@ export default function SettingsApp() {
                   <option>USB Headset</option>
                 </select>
               </div>
-
               <div>
                 <label className="flex items-center">
                   <input type="checkbox" defaultChecked className="mr-2" />
@@ -179,6 +194,175 @@ export default function SettingsApp() {
                     Enable system sounds
                   </span>
                 </label>
+              </div>
+              {/* Sound Pages */}
+              <div className="mt-8">
+                <h4 className="font-medium text-gray-800 mb-2">Advanced</h4>
+                <ul className="list-disc list-inside text-sm text-gray-600 space-y-1">
+                  <li>App volume and device preferences</li>
+                  <li>Input device selection</li>
+                  <li>Sound enhancements</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {activeSection === "network" && (
+          <div>
+            <h3 className="text-xl font-semibold text-gray-800 mb-6">
+              Network Settings
+            </h3>
+            <div className="space-y-6">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Wi-Fi
+                </label>
+                <select className="w-full p-2 border border-gray-300 rounded-lg">
+                  <option>Home Wi-Fi</option>
+                  <option>Office Network</option>
+                  <option>Mobile Hotspot</option>
+                </select>
+              </div>
+              <div>
+                <label className="flex items-center">
+                  <input type="checkbox" checked className="mr-2" readOnly />
+                  <span className="text-sm text-gray-700">
+                    Connect automatically
+                  </span>
+                </label>
+              </div>
+              {/* Network Pages */}
+              <div className="mt-8">
+                <h4 className="font-medium text-gray-800 mb-2">Advanced</h4>
+                <ul className="list-disc list-inside text-sm text-gray-600 space-y-1">
+                  <li>Proxy settings</li>
+                  <li>Network reset</li>
+                  <li>Data usage</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {activeSection === "power" && (
+          <div>
+            <h3 className="text-xl font-semibold text-gray-800 mb-6">
+              Power Settings
+            </h3>
+            <div className="space-y-6">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Battery Saver
+                </label>
+                <input type="checkbox" className="mr-2" />
+                <span className="text-sm text-gray-700">
+                  Enable battery saver
+                </span>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Sleep After
+                </label>
+                <select className="w-full p-2 border border-gray-300 rounded-lg">
+                  <option>15 minutes</option>
+                  <option>30 minutes</option>
+                  <option>Never</option>
+                </select>
+              </div>
+              {/* Power Pages */}
+              <div className="mt-8">
+                <h4 className="font-medium text-gray-800 mb-2">Advanced</h4>
+                <ul className="list-disc list-inside text-sm text-gray-600 space-y-1">
+                  <li>Battery usage</li>
+                  <li>Power plans</li>
+                  <li>Startup settings</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {activeSection === "accounts" && (
+          <div>
+            <h3 className="text-xl font-semibold text-gray-800 mb-6">
+              Accounts Settings
+            </h3>
+            <div className="space-y-6">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Username
+                </label>
+                <input
+                  type="text"
+                  value="User"
+                  className="w-full p-2 border border-gray-300 rounded-lg"
+                  readOnly
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Email
+                </label>
+                <input
+                  type="email"
+                  value="user@example.com"
+                  className="w-full p-2 border border-gray-300 rounded-lg"
+                  readOnly
+                />
+              </div>
+              {/* Accounts Pages */}
+              <div className="mt-8">
+                <h4 className="font-medium text-gray-800 mb-2">Advanced</h4>
+                <ul className="list-disc list-inside text-sm text-gray-600 space-y-1">
+                  <li>Sign-in options</li>
+                  <li>Family & other users</li>
+                  <li>Sync settings</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {activeSection === "privacy" && (
+          <div>
+            <h3 className="text-xl font-semibold text-gray-800 mb-6">
+              Privacy Settings
+            </h3>
+            <div className="space-y-6">
+              <div>
+                <label className="flex items-center">
+                  <input
+                    type="checkbox"
+                    checked={settings.notifications}
+                    onChange={(e) =>
+                      updateSetting("notifications", e.target.checked)
+                    }
+                    className="mr-2"
+                  />
+                  <span className="text-sm text-gray-700">
+                    Allow notifications
+                  </span>
+                </label>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  App Permissions
+                </label>
+                <select className="w-full p-2 border border-gray-300 rounded-lg">
+                  <option>Standard</option>
+                  <option>Restricted</option>
+                  <option>Custom</option>
+                </select>
+              </div>
+              {/* Privacy Pages */}
+              <div className="mt-8">
+                <h4 className="font-medium text-gray-800 mb-2">Advanced</h4>
+                <ul className="list-disc list-inside text-sm text-gray-600 space-y-1">
+                  <li>Location access</li>
+                  <li>Camera & microphone</li>
+                  <li>Diagnostics & feedback</li>
+                </ul>
               </div>
             </div>
           </div>
@@ -189,7 +373,6 @@ export default function SettingsApp() {
             <h3 className="text-xl font-semibold text-gray-800 mb-6">
               Personalization
             </h3>
-
             <div className="space-y-6">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -211,7 +394,6 @@ export default function SettingsApp() {
                   ))}
                 </div>
               </div>
-
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Wallpaper
@@ -246,7 +428,6 @@ export default function SettingsApp() {
             <h3 className="text-xl font-semibold text-gray-800 mb-6">
               System Information
             </h3>
-
             <div className="space-y-6">
               <div className="bg-gray-50 p-4 rounded-lg">
                 <h4 className="font-medium text-gray-800 mb-3">
@@ -271,7 +452,6 @@ export default function SettingsApp() {
                   </div>
                 </div>
               </div>
-
               <div>
                 <h4 className="font-medium text-gray-800 mb-3">
                   Storage Usage
@@ -315,7 +495,6 @@ export default function SettingsApp() {
                   </div>
                 </div>
               </div>
-
               <div>
                 <label className="flex items-center">
                   <input
@@ -330,6 +509,15 @@ export default function SettingsApp() {
                     Automatically install updates
                   </span>
                 </label>
+              </div>
+              {/* System Pages */}
+              <div className="mt-8">
+                <h4 className="font-medium text-gray-800 mb-2">Advanced</h4>
+                <ul className="list-disc list-inside text-sm text-gray-600 space-y-1">
+                  <li>About</li>
+                  <li>System restore</li>
+                  <li>Performance monitor</li>
+                </ul>
               </div>
             </div>
           </div>

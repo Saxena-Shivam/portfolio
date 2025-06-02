@@ -1,54 +1,63 @@
-"use client"
+"use client";
 
-import { useState, useRef, useEffect } from "react"
-import { useWindows } from "../contexts/WindowContext"
+import { useState, useRef, useEffect } from "react";
+import { useWindows } from "../contexts/WindowContext";
 
 export default function Window({ window }) {
-  const { closeWindow, minimizeWindow, maximizeWindow, focusWindow, updateWindowPosition, updateWindowSize } =
-    useWindows()
-  const [isDragging, setIsDragging] = useState(false)
-  const [isResizing, setIsResizing] = useState(false)
-  const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 })
-  const windowRef = useRef(null)
+  const {
+    closeWindow,
+    minimizeWindow,
+    maximizeWindow,
+    focusWindow,
+    updateWindowPosition,
+    updateWindowSize,
+  } = useWindows();
+  const [isDragging, setIsDragging] = useState(false);
+  const [isResizing, setIsResizing] = useState(false);
+  const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
+  const windowRef = useRef(null);
 
   const handleMouseDown = (e) => {
-    if (e.target === e.currentTarget || e.target.classList.contains("window-header")) {
-      setIsDragging(true)
+    if (
+      e.target === e.currentTarget ||
+      e.target.classList.contains("window-header")
+    ) {
+      setIsDragging(true);
       setDragOffset({
         x: e.clientX - window.position.x,
         y: e.clientY - window.position.y,
-      })
-      focusWindow(window.id)
+      });
+      focusWindow(window.id);
     }
-  }
+  };
 
   const handleMouseMove = (e) => {
     if (isDragging && !window.isMaximized) {
       updateWindowPosition(window.id, {
         x: e.clientX - dragOffset.x,
         y: e.clientY - dragOffset.y,
-      })
+      });
     }
-  }
+  };
 
   const handleMouseUp = () => {
-    setIsDragging(false)
-    setIsResizing(false)
-  }
+    setIsDragging(false);
+    setIsResizing(false);
+  };
 
   useEffect(() => {
     if (isDragging || isResizing) {
-      document.addEventListener("mousemove", handleMouseMove)
-      document.addEventListener("mouseup", handleMouseUp)
+      document.addEventListener("mousemove", handleMouseMove);
+      document.addEventListener("mouseup", handleMouseUp);
       return () => {
-        document.removeEventListener("mousemove", handleMouseMove)
-        document.removeEventListener("mouseup", handleMouseUp)
-      }
+        document.removeEventListener("mousemove", handleMouseMove);
+        document.removeEventListener("mouseup", handleMouseUp);
+      };
     }
-  }, [isDragging, isResizing, dragOffset])
+  }, [isDragging, isResizing, dragOffset]);
 
   if (window.isMinimized) {
-    return null
+    return null;
   }
 
   const windowStyle = window.isMaximized
@@ -69,7 +78,7 @@ export default function Window({ window }) {
         width: window.size.width,
         height: window.size.height,
         zIndex: window.zIndex,
-      }
+      };
 
   return (
     <div
@@ -99,14 +108,19 @@ export default function Window({ window }) {
             />
           </div>
         </div>
-        <div className="text-sm font-medium text-gray-700 flex-1 text-center">{window.title}</div>
+        <div className="text-sm font-medium text-gray-700 flex-1 text-center">
+          {window.title}
+        </div>
         <div className="w-16" /> {/* Spacer for centering */}
       </div>
 
       {/* Window Content */}
-      <div className="flex-1 overflow-auto" style={{ height: "calc(100% - 40px)" }}>
+      <div
+        className="flex-1 overflow-auto"
+        style={{ height: "calc(100% - 40px)" }}
+      >
         {window.component}
       </div>
     </div>
-  )
+  );
 }

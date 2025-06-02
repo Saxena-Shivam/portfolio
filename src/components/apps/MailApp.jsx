@@ -72,7 +72,7 @@ export default function ContactApp() {
                   </div>
                   <div>
                     <p className="font-medium text-gray-800">Phone</p>
-                    <p className="text-gray-600">+91 98765 43210</p>
+                    <p className="text-gray-600">+91 9507250528</p>
                   </div>
                 </div>
 
@@ -96,7 +96,8 @@ export default function ContactApp() {
 
               <div className="grid grid-cols-2 gap-4">
                 <a
-                  href="#"
+                  href="https://github.com/Saxena-Shivam"
+                  target="_blank"
                   className="flex items-center space-x-3 p-3 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
                 >
                   <Github className="w-5 h-5 text-gray-700" />
@@ -104,7 +105,8 @@ export default function ContactApp() {
                 </a>
 
                 <a
-                  href="#"
+                  href="https://www.linkedin.com/in/shivam-saxena-aa8754289/"
+                  target="_blank"
                   className="flex items-center space-x-3 p-3 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
                 >
                   <Linkedin className="w-5 h-5 text-blue-600" />
@@ -112,7 +114,8 @@ export default function ContactApp() {
                 </a>
 
                 <a
-                  href="#"
+                  href="https://discord.com/users/shivamsaxena0909"
+                  target="_blank"
                   className="flex items-center space-x-3 p-3 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
                 >
                   <MessageSquare className="w-5 h-5 text-green-600" />
