@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect } from "react";
 import { useWindows } from "../contexts/WindowContext";
-
+import useIsMobile from "../hooks/useIsMobile.jsx";
 export default function Window({ window }) {
   const {
     closeWindow,
@@ -18,8 +18,8 @@ export default function Window({ window }) {
   const windowRef = useRef(null);
 
   // Responsive: detect mobile/tablet
-  const isMobile = typeof window !== "undefined" && window.innerWidth < 640;
-
+  const isMobile = useIsMobile();
+  console.log("isMobile:", isMobile);
   const handleMouseDown = (e) => {
     if (
       e.target === e.currentTarget ||
