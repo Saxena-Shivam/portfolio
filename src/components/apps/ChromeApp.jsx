@@ -1,13 +1,15 @@
 "use client";
 
 import { useState } from "react";
+import { useChromeApp } from "../../contexts/ChromeAppContext";
 
 export default function ChromeApp() {
-  const [url, setUrl] = useState("https://grocto-frontend.onrender.com/");
+  const { url, setUrl } = useChromeApp();
+  const [input, setInput] = useState(url);
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    let inputUrl = url.trim();
+    let inputUrl = input.trim();
     if (!/^https?:\/\//i.test(inputUrl)) {
       inputUrl = "https://" + inputUrl;
     }
@@ -19,8 +21,8 @@ export default function ChromeApp() {
       <form onSubmit={handleSubmit} className="flex p-2 bg-gray-800">
         <input
           type="text"
-          value={url}
-          onChange={(e) => setUrl(e.target.value)}
+          value={input}
+          onChange={(e) => setInput(e.target.value)}
           className="flex-1 px-2 py-1 rounded-l bg-gray-700 text-white outline-none"
         />
         <button

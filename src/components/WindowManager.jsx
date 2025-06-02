@@ -1,8 +1,8 @@
-import { useWindows } from "../contexts/WindowContext"
-import Window from "./Window"
+import { useWindows } from "../contexts/WindowContext.jsx";
+import Window from "./Window.jsx";
 
 export default function WindowManager() {
-  const { windows } = useWindows()
+  const { windows } = useWindows();
 
   return (
     <>
@@ -10,5 +10,5 @@ export default function WindowManager() {
         <Window key={window.id} window={window} />
       ))}
     </>
-  )
+  );
 }

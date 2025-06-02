@@ -14,115 +14,67 @@ import {
   MapPin,
   Phone,
   Calendar,
-  ChevronLeft,
-  ChevronRight,
-  X,
+  ExternalLink,
 } from "lucide-react";
+
+// Tech icons import
+import {
+  SiJavascript,
+  SiTypescript,
+  SiReact,
+  SiNextdotjs,
+  SiNodedotjs,
+  SiExpress,
+  SiMongodb,
+  SiMysql,
+  SiPython,
+  SiCplusplus,
+  SiGit,
+  SiTailwindcss,
+  SiHtml5,
+  SiCss3,
+  SiFirebase,
+} from "react-icons/si";
 
 export default function PortfolioLayout() {
   const [activeSection, setActiveSection] = useState("about");
-  const [showResume, setShowResume] = useState(false);
-  const [resumePage, setResumePage] = useState(1);
-
-  const resumeUrl = "/Shivam_Inter_IIT14_0 (1).pdf";
-
-  const handleResumeNavigation = (direction) => {
-    if (direction === "prev" && resumePage > 1) {
-      setResumePage(resumePage - 1);
-    } else if (direction === "next" && resumePage < 2) {
-      setResumePage(resumePage + 1);
-    }
-  };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 flex flex-col md:flex-row">
       {/* Sidebar */}
-      <div className="w-64 bg-gradient-to-b from-blue-900 to-indigo-900 text-white flex flex-col">
+      <div className="w-full md:w-64 bg-gradient-to-b from-indigo-800 to-indigo-900 text-white flex flex-col">
         <div className="p-4 border-b border-indigo-700">
           <h1 className="text-xl font-bold">Shivam Saxena</h1>
-          <p className="text-blue-200 text-sm">
+          <p className="text-indigo-200 text-sm">
             Electrical Engineering Student
           </p>
         </div>
 
         <nav className="flex-1 py-4">
-          <button
-            className={`flex items-center w-full px-4 py-3 text-left transition-colors ${
-              activeSection === "about"
-                ? "bg-blue-600 text-white"
-                : "text-blue-100 hover:bg-blue-800/50"
-            }`}
-            onClick={() => setActiveSection("about")}
-          >
-            <User className="w-5 h-5 mr-3" />
-            <span>About Shivam</span>
-          </button>
-
-          <button
-            className={`flex items-center w-full px-4 py-3 text-left transition-colors ${
-              activeSection === "education"
-                ? "bg-blue-600 text-white"
-                : "text-blue-100 hover:bg-blue-800/50"
-            }`}
-            onClick={() => setActiveSection("education")}
-          >
-            <GraduationCap className="w-5 h-5 mr-3" />
-            <span>Education</span>
-          </button>
-
-          <button
-            className={`flex items-center w-full px-4 py-3 text-left transition-colors ${
-              activeSection === "skills"
-                ? "bg-blue-600 text-white"
-                : "text-blue-100 hover:bg-blue-800/50"
-            }`}
-            onClick={() => setActiveSection("skills")}
-          >
-            <Code2 className="w-5 h-5 mr-3" />
-            <span>Skills</span>
-          </button>
-
-          <button
-            className={`flex items-center w-full px-4 py-3 text-left transition-colors ${
-              activeSection === "projects"
-                ? "bg-blue-600 text-white"
-                : "text-blue-100 hover:bg-blue-800/50"
-            }`}
-            onClick={() => setActiveSection("projects")}
-          >
-            <FolderGit2 className="w-5 h-5 mr-3" />
-            <span>Projects</span>
-          </button>
-
-          <button
-            className={`flex items-center w-full px-4 py-3 text-left transition-colors ${
-              activeSection === "resume"
-                ? "bg-blue-600 text-white"
-                : "text-blue-100 hover:bg-blue-800/50"
-            }`}
-            onClick={() => {
-              setActiveSection("resume");
-              setShowResume(true);
-            }}
-          >
-            <FileText className="w-5 h-5 mr-3" />
-            <span>Resume</span>
-          </button>
-
-          <button
-            className={`flex items-center w-full px-4 py-3 text-left transition-colors ${
-              activeSection === "achievements"
-                ? "bg-blue-600 text-white"
-                : "text-blue-100 hover:bg-blue-800/50"
-            }`}
-            onClick={() => setActiveSection("achievements")}
-          >
-            <Heart className="w-5 h-5 mr-3" />
-            <span>Achievements</span>
-          </button>
+          {[
+            { id: "about", icon: User, label: "About Shivam" },
+            { id: "education", icon: GraduationCap, label: "Education" },
+            { id: "skills", icon: Code2, label: "Skills" },
+            { id: "projects", icon: FolderGit2, label: "Projects" },
+            { id: "resume", icon: FileText, label: "Resume" },
+            { id: "achievements", icon: Heart, label: "Achievements" },
+          ].map((item) => (
+            <button
+              key={item.id}
+              className={`flex items-center w-full px-4 py-3 text-left transition-all duration-300 ${
+                activeSection === item.id
+                  ? "bg-indigo-600 text-white shadow-inner"
+                  : "text-indigo-100 hover:bg-indigo-700/70"
+              }`}
+              onClick={() => setActiveSection(item.id)}
+            >
+              <item.icon className="w-5 h-5 mr-3" />
+              <span>{item.label}</span>
+            </button>
+          ))}
         </nav>
 
-        <div className="p-4 border-t border-blue-800 text-sm text-blue-200">
+        <div className="p-4 border-t border-indigo-800 text-sm text-indigo-200">
           <p>© 2024 Shivam Saxena</p>
         </div>
       </div>
@@ -135,8 +87,10 @@ export default function PortfolioLayout() {
             <div className="flex flex-col md:flex-row gap-8">
               <div className="md:w-1/3">
                 <div className="text-center">
-                  <div className="w-32 h-32 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full mx-auto mb-4 flex items-center justify-center text-white text-4xl font-bold">
-                    SS
+                  <div className="w-32 h-32 mx-auto mb-4 flex items-center justify-center overflow-hidden rounded-full border-4 border-indigo-200 shadow-lg">
+                    <div className="bg-gradient-to-br from-indigo-400 to-indigo-600 w-full h-full flex items-center justify-center text-white text-4xl font-bold">
+                      SS
+                    </div>
                   </div>
                   <h1 className="text-2xl font-bold text-gray-800 mb-2">
                     Shivam Saxena
@@ -149,20 +103,20 @@ export default function PortfolioLayout() {
                     <a
                       href="https://github.com/Saxena-Shivam"
                       target="_blank"
-                      className="text-gray-600 hover:text-gray-900 transition-colors"
+                      className="text-gray-600 hover:text-gray-900 transition-colors bg-gray-100 p-2 rounded-full hover:shadow-md"
                     >
                       <Github className="w-5 h-5" />
                     </a>
                     <a
                       href="https://linkedin.com/in/shivam-saxena-aa8754289/"
                       target="_blank"
-                      className="text-gray-600 hover:text-blue-700 transition-colors"
+                      className="text-gray-600 hover:text-blue-700 transition-colors bg-gray-100 p-2 rounded-full hover:shadow-md"
                     >
                       <Linkedin className="w-5 h-5" />
                     </a>
                     <a
                       href="mailto:24ee01074@iitbbs.ac.in"
-                      className="text-gray-600 hover:text-red-600 transition-colors"
+                      className="text-gray-600 hover:text-red-600 transition-colors bg-gray-100 p-2 rounded-full hover:shadow-md"
                     >
                       <Mail className="w-5 h-5" />
                     </a>
@@ -172,40 +126,39 @@ export default function PortfolioLayout() {
 
               <div className="md:w-2/3">
                 <div className="space-y-6">
-                  <section>
+                  <section className="bg-white p-6 rounded-xl shadow-md hover:shadow-lg transition-shadow duration-300">
                     <h2 className="text-xl font-semibold text-gray-800 mb-3">
                       About Me
                     </h2>
                     <p className="text-gray-600 leading-relaxed">
                       Electrical Engineering student at IIT Bhubaneswar
-                      passionate about full-stack development. I specialize in
-                      building efficient web applications using modern
-                      technologies like React, Node.js, and MongoDB. With
-                      competitive programming experience and problem-solving
-                      skills, I create innovative solutions that enhance user
-                      experiences.
+                      passionate about full-stack development. I build efficient
+                      web applications using modern technologies like React,
+                      Node.js, and MongoDB. With competitive programming
+                      experience, I create innovative solutions that enhance
+                      user experiences.
                     </p>
                   </section>
 
-                  <section>
+                  <section className="bg-white p-6 rounded-xl shadow-md hover:shadow-lg transition-shadow duration-300">
                     <h2 className="text-xl font-semibold text-gray-800 mb-3">
                       Contact Information
                     </h2>
-                    <div className="space-y-2">
+                    <div className="space-y-3">
                       <div className="flex items-center space-x-2 text-gray-600">
-                        <MapPin className="w-4 h-4" />
+                        <MapPin className="w-4 h-4 text-indigo-600" />
                         <span>IIT Bhubaneswar, Odisha, India</span>
                       </div>
                       <div className="flex items-center space-x-2 text-gray-600">
-                        <Mail className="w-4 h-4" />
+                        <Mail className="w-4 h-4 text-indigo-600" />
                         <span>24ee01074@iitbbs.ac.in</span>
                       </div>
                       <div className="flex items-center space-x-2 text-gray-600">
-                        <Phone className="w-4 h-4" />
+                        <Phone className="w-4 h-4 text-indigo-600" />
                         <span>(+91) 9507250528</span>
                       </div>
                       <div className="flex items-center space-x-2 text-gray-600">
-                        <Calendar className="w-4 h-4" />
+                        <Calendar className="w-4 h-4 text-indigo-600" />
                         <span>
                           Available for internships and collaborations
                         </span>
@@ -213,24 +166,24 @@ export default function PortfolioLayout() {
                     </div>
                   </section>
 
-                  <section>
+                  <section className="bg-white p-6 rounded-xl shadow-md hover:shadow-lg transition-shadow duration-300">
                     <h2 className="text-xl font-semibold text-gray-800 mb-3">
                       Competitive Programming
                     </h2>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                      <div className="bg-blue-50 p-4 rounded-lg">
+                      <div className="bg-gradient-to-r from-blue-50 to-indigo-50 p-4 rounded-lg border border-blue-100 hover:shadow-md transition-shadow">
                         <h3 className="font-semibold text-gray-800">
                           LeetCode
                         </h3>
                         <p className="text-blue-600">Max Rating: 1630</p>
                       </div>
-                      <div className="bg-green-50 p-4 rounded-lg">
+                      <div className="bg-gradient-to-r from-green-50 to-teal-50 p-4 rounded-lg border border-green-100 hover:shadow-md transition-shadow">
                         <h3 className="font-semibold text-gray-800">
                           CodeChef
                         </h3>
                         <p className="text-green-600">Max Rating: 1493</p>
                       </div>
-                      <div className="bg-purple-50 p-4 rounded-lg">
+                      <div className="bg-gradient-to-r from-purple-50 to-violet-50 p-4 rounded-lg border border-purple-100 hover:shadow-md transition-shadow">
                         <h3 className="font-semibold text-gray-800">
                           CodeForces
                         </h3>
@@ -250,7 +203,7 @@ export default function PortfolioLayout() {
             <h1 className="text-2xl font-bold text-gray-800 mb-6">Education</h1>
 
             <div className="space-y-6">
-              <div className="bg-white rounded-lg shadow-sm p-6 border-l-4 border-blue-500">
+              <div className="bg-white rounded-xl shadow-md p-6 border-l-4 border-indigo-500 hover:shadow-lg transition-all duration-300">
                 <div className="flex justify-between items-start">
                   <div>
                     <h2 className="text-xl font-semibold text-gray-800">
@@ -263,13 +216,13 @@ export default function PortfolioLayout() {
                       2024 - 2028 • CGPA: 8.62
                     </p>
                   </div>
-                  <div className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm">
+                  <div className="bg-indigo-100 text-indigo-800 px-3 py-1 rounded-full text-sm font-medium">
                     Current
                   </div>
                 </div>
               </div>
 
-              <div className="bg-white rounded-lg shadow-sm p-6 border-l-4 border-green-500">
+              <div className="bg-white rounded-xl shadow-md p-6 border-l-4 border-green-500 hover:shadow-lg transition-all duration-300">
                 <div className="flex justify-between items-start">
                   <div>
                     <h2 className="text-xl font-semibold text-gray-800">
@@ -280,13 +233,13 @@ export default function PortfolioLayout() {
                       2023 • Percentage: 89.2%
                     </p>
                   </div>
-                  <div className="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm">
+                  <div className="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-medium">
                     Completed
                   </div>
                 </div>
               </div>
 
-              <div className="bg-white rounded-lg shadow-sm p-6 border-l-4 border-purple-500">
+              <div className="bg-white rounded-xl shadow-md p-6 border-l-4 border-purple-500 hover:shadow-lg transition-all duration-300">
                 <div className="flex justify-between items-start">
                   <div>
                     <h2 className="text-xl font-semibold text-gray-800">
@@ -297,7 +250,7 @@ export default function PortfolioLayout() {
                       2021 • Percentage: 85.8%
                     </p>
                   </div>
-                  <div className="bg-purple-100 text-purple-800 px-3 py-1 rounded-full text-sm">
+                  <div className="bg-purple-100 text-purple-800 px-3 py-1 rounded-full text-sm font-medium">
                     Completed
                   </div>
                 </div>
@@ -314,88 +267,155 @@ export default function PortfolioLayout() {
             </h1>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="bg-white rounded-lg shadow-sm p-6">
-                <h2 className="text-xl font-semibold text-gray-800 mb-4">
+              <div className="bg-white rounded-xl shadow-md p-6 hover:shadow-lg transition-all duration-300">
+                <h2 className="text-xl font-semibold text-gray-800 mb-4 flex items-center">
+                  <Code2 className="w-5 h-5 mr-2 text-indigo-600" />
                   Programming Languages
                 </h2>
-                <div className="flex flex-wrap gap-2">
-                  {["C++", "C", "JavaScript", "Python"].map((skill) => (
+                <div className="flex flex-wrap gap-3">
+                  {[
+                    {
+                      name: "C++",
+                      icon: <SiCplusplus className="w-5 h-5 text-blue-600" />,
+                    },
+                    {
+                      name: "C",
+                      icon: <SiCplusplus className="w-5 h-5 text-blue-600" />,
+                    },
+                    {
+                      name: "JavaScript",
+                      icon: (
+                        <SiJavascript className="w-5 h-5 text-yellow-500" />
+                      ),
+                    },
+                    {
+                      name: "Python",
+                      icon: <SiPython className="w-5 h-5 text-blue-500" />,
+                    },
+                  ].map((skill) => (
                     <span
-                      key={skill}
-                      className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm"
+                      key={skill.name}
+                      className="bg-gray-50 text-gray-800 px-3 py-2 rounded-lg text-sm flex items-center gap-2 border border-gray-200 hover:shadow-md transition-all"
                     >
-                      {skill}
+                      {skill.icon}
+                      {skill.name}
                     </span>
                   ))}
                 </div>
               </div>
 
-              <div className="bg-white rounded-lg shadow-sm p-6">
-                <h2 className="text-xl font-semibold text-gray-800 mb-4">
+              <div className="bg-white rounded-xl shadow-md p-6 hover:shadow-lg transition-all duration-300">
+                <h2 className="text-xl font-semibold text-gray-800 mb-4 flex items-center">
+                  <SiReact className="w-5 h-5 mr-2 text-blue-500" />
                   Web Development
                 </h2>
-                <div className="flex flex-wrap gap-2">
+                <div className="flex flex-wrap gap-3">
                   {[
-                    "Next.js",
-                    "React.js",
-                    "Express.js",
-                    "Node.js",
-                    "Tailwind",
-                    "CSS",
-                    "HTML",
-                    "Servlet",
-                    "JSP",
+                    {
+                      name: "Next.js",
+                      icon: <SiNextdotjs className="w-5 h-5 text-black" />,
+                    },
+                    {
+                      name: "React.js",
+                      icon: <SiReact className="w-5 h-5 text-blue-500" />,
+                    },
+                    {
+                      name: "Express.js",
+                      icon: <SiExpress className="w-5 h-5 text-green-600" />,
+                    },
+                    {
+                      name: "Node.js",
+                      icon: <SiNodedotjs className="w-5 h-5 text-green-600" />,
+                    },
+                    {
+                      name: "Tailwind",
+                      icon: <SiTailwindcss className="w-5 h-5 text-blue-400" />,
+                    },
+                    {
+                      name: "HTML",
+                      icon: <SiHtml5 className="w-5 h-5 text-orange-500" />,
+                    },
+                    {
+                      name: "CSS",
+                      icon: <SiCss3 className="w-5 h-5 text-blue-500" />,
+                    },
                   ].map((skill) => (
                     <span
-                      key={skill}
-                      className="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm"
+                      key={skill.name}
+                      className="bg-gray-50 text-gray-800 px-3 py-2 rounded-lg text-sm flex items-center gap-2 border border-gray-200 hover:shadow-md transition-all"
                     >
-                      {skill}
+                      {skill.icon}
+                      {skill.name}
                     </span>
                   ))}
                 </div>
               </div>
 
-              <div className="bg-white rounded-lg shadow-sm p-6">
-                <h2 className="text-xl font-semibold text-gray-800 mb-4">
+              <div className="bg-white rounded-xl shadow-md p-6 hover:shadow-lg transition-all duration-300">
+                <h2 className="text-xl font-semibold text-gray-800 mb-4 flex items-center">
+                  <SiMongodb className="w-5 h-5 mr-2 text-green-500" />
                   Databases & Tools
                 </h2>
-                <div className="flex flex-wrap gap-2">
+                <div className="flex flex-wrap gap-3">
                   {[
-                    "MySQL",
-                    "MongoDB",
-                    "VS Code",
-                    "Git",
-                    "Postman",
-                    "Dev C++",
-                    "Remix IDE",
+                    {
+                      name: "MySQL",
+                      icon: <SiMysql className="w-5 h-5 text-blue-600" />,
+                    },
+                    {
+                      name: "MongoDB",
+                      icon: <SiMongodb className="w-5 h-5 text-green-500" />,
+                    },
+                    {
+                      name: "Git",
+                      icon: <SiGit className="w-5 h-5 text-orange-600" />,
+                    },
+                    {
+                      name: "Firebase",
+                      icon: <SiFirebase className="w-5 h-5 text-yellow-500" />,
+                    },
                   ].map((skill) => (
                     <span
-                      key={skill}
-                      className="bg-purple-100 text-purple-800 px-3 py-1 rounded-full text-sm"
+                      key={skill.name}
+                      className="bg-gray-50 text-gray-800 px-3 py-2 rounded-lg text-sm flex items-center gap-2 border border-gray-200 hover:shadow-md transition-all"
                     >
-                      {skill}
+                      {skill.icon}
+                      {skill.name}
                     </span>
                   ))}
                 </div>
               </div>
 
-              <div className="bg-white rounded-lg shadow-sm p-6">
-                <h2 className="text-xl font-semibold text-gray-800 mb-4">
+              <div className="bg-white rounded-xl shadow-md p-6 hover:shadow-lg transition-all duration-300">
+                <h2 className="text-xl font-semibold text-gray-800 mb-4 flex items-center">
+                  <Code2 className="w-5 h-5 mr-2 text-indigo-600" />
                   Other Skills
                 </h2>
-                <div className="flex flex-wrap gap-2">
+                <div className="flex flex-wrap gap-3">
                   {[
-                    "Matlab",
-                    "Logisim",
-                    "EMU8086",
-                    "Object Oriented Programming",
+                    {
+                      name: "Matlab",
+                      icon: <SiCplusplus className="w-5 h-5 text-blue-600" />,
+                    },
+                    {
+                      name: "Logisim",
+                      icon: <Code2 className="w-5 h-5 text-gray-600" />,
+                    },
+                    {
+                      name: "EMU8086",
+                      icon: <Code2 className="w-5 h-5 text-gray-600" />,
+                    },
+                    {
+                      name: "OOP",
+                      icon: <Code2 className="w-5 h-5 text-gray-600" />,
+                    },
                   ].map((skill) => (
                     <span
-                      key={skill}
-                      className="bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full text-sm"
+                      key={skill.name}
+                      className="bg-gray-50 text-gray-800 px-3 py-2 rounded-lg text-sm flex items-center gap-2 border border-gray-200 hover:shadow-md transition-all"
                     >
-                      {skill}
+                      {skill.icon}
+                      {skill.name}
                     </span>
                   ))}
                 </div>
@@ -410,7 +430,7 @@ export default function PortfolioLayout() {
             <h1 className="text-2xl font-bold text-gray-800 mb-6">Projects</h1>
 
             <div className="space-y-6">
-              <div className="bg-white rounded-lg shadow-sm p-6 border-l-4 border-blue-500">
+              <div className="bg-white rounded-xl shadow-md p-6 border-l-4 border-indigo-500 hover:shadow-lg transition-all duration-300">
                 <div className="flex justify-between items-start">
                   <div>
                     <h2 className="text-xl font-semibold text-gray-800">
@@ -429,29 +449,59 @@ export default function PortfolioLayout() {
                   <li>
                     Automated email reminders using Node-cron and Nodemailer
                   </li>
-                  <li>
-                    Responsive UI with role-based dashboards in React and
-                    Tailwind CSS
-                  </li>
-                  <li>
-                    Optimized database schema for efficient storage and
-                    retrieval
-                  </li>
+                  <li>Responsive UI with role-based dashboards</li>
                 </ul>
                 <div className="mt-4 flex flex-wrap gap-2">
-                  <span className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm">
-                    React
-                  </span>
-                  <span className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm">
-                    Node.js
-                  </span>
-                  <span className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm">
-                    MongoDB
-                  </span>
+                  {[
+                    {
+                      name: "React",
+                      icon: <SiReact className="w-4 h-4 text-blue-500" />,
+                    },
+                    {
+                      name: "Node.js",
+                      icon: <SiNodedotjs className="w-4 h-4 text-green-600" />,
+                    },
+                    {
+                      name: "MongoDB",
+                      icon: <SiMongodb className="w-4 h-4 text-green-500" />,
+                    },
+                    {
+                      name: "Express",
+                      icon: <SiExpress className="w-4 h-4 text-gray-800" />,
+                    },
+                  ].map((tech) => (
+                    <span
+                      key={tech.name}
+                      className="bg-gray-50 text-gray-800 px-3 py-1 rounded-full text-xs flex items-center gap-1 border border-gray-200"
+                    >
+                      {tech.icon}
+                      {tech.name}
+                    </span>
+                  ))}
+                </div>
+                <div className="mt-4 flex flex-wrap gap-3">
+                  <a
+                    href="https://github.com/Saxena-Shivam/ARC_Task"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="bg-gray-800 text-white px-4 py-2 rounded-lg hover:bg-gray-700 transition-colors flex items-center shadow-md hover:shadow-lg"
+                  >
+                    <Github className="w-4 h-4 mr-2" />
+                    <span>GitHub Repo</span>
+                  </a>
+                  <a
+                    href="https://arc-woad-kappa.vercel.app/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition-colors flex items-center shadow-md hover:shadow-lg"
+                  >
+                    <ExternalLink className="w-4 h-4 mr-2" />
+                    <span>Live Demo</span>
+                  </a>
                 </div>
               </div>
 
-              <div className="bg-white rounded-lg shadow-sm p-6 border-l-4 border-green-500">
+              <div className="bg-white rounded-xl shadow-md p-6 border-l-4 border-green-500 hover:shadow-lg transition-all duration-300">
                 <div className="flex justify-between items-start">
                   <div>
                     <h2 className="text-xl font-semibold text-gray-800">
@@ -465,25 +515,59 @@ export default function PortfolioLayout() {
                     Full-stack property rental platform with authentication
                   </li>
                   <li>Booking management and wishlist features</li>
-                  <li>
-                    Advanced search, filtering, and interactive map for property
-                    discovery
-                  </li>
+                  <li>Advanced search, filtering, and interactive map</li>
                 </ul>
                 <div className="mt-4 flex flex-wrap gap-2">
-                  <span className="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm">
-                    Next.js
-                  </span>
-                  <span className="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm">
-                    Express
-                  </span>
-                  <span className="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm">
-                    MySQL
-                  </span>
+                  {[
+                    {
+                      name: "Next.js",
+                      icon: <SiNextdotjs className="w-4 h-4 text-black" />,
+                    },
+                    {
+                      name: "Express",
+                      icon: <SiExpress className="w-4 h-4 text-gray-800" />,
+                    },
+                    {
+                      name: "MySQL",
+                      icon: <SiMysql className="w-4 h-4 text-blue-600" />,
+                    },
+                    {
+                      name: "Tailwind",
+                      icon: <SiTailwindcss className="w-4 h-4 text-blue-400" />,
+                    },
+                  ].map((tech) => (
+                    <span
+                      key={tech.name}
+                      className="bg-gray-50 text-gray-800 px-3 py-1 rounded-full text-xs flex items-center gap-1 border border-gray-200"
+                    >
+                      {tech.icon}
+                      {tech.name}
+                    </span>
+                  ))}
+                </div>
+                <div className="mt-4 flex flex-wrap gap-3">
+                  <a
+                    href="https://github.com/Saxena-Shivam/Airbnb"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="bg-gray-800 text-white px-4 py-2 rounded-lg hover:bg-gray-700 transition-colors flex items-center shadow-md hover:shadow-lg"
+                  >
+                    <Github className="w-4 h-4 mr-2" />
+                    <span>GitHub Repo</span>
+                  </a>
+                  <a
+                    href="#"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition-colors flex items-center shadow-md hover:shadow-lg"
+                  >
+                    <ExternalLink className="w-4 h-4 mr-2" />
+                    <span>Live Demo</span>
+                  </a>
                 </div>
               </div>
 
-              <div className="bg-white rounded-lg shadow-sm p-6 border-l-4 border-purple-500">
+              <div className="bg-white rounded-xl shadow-md p-6 border-l-4 border-purple-500 hover:shadow-lg transition-all duration-300">
                 <div className="flex justify-between items-start">
                   <div>
                     <h2 className="text-xl font-semibold text-gray-800">
@@ -496,22 +580,58 @@ export default function PortfolioLayout() {
                 </div>
                 <ul className="mt-3 text-gray-600 space-y-2 list-disc pl-5">
                   <li>
-                    Intuitive grocery browsing interface optimized for college
-                    campuses
+                    Intuitive grocery browsing interface for college campuses
                   </li>
                   <li>Seamless ordering experience</li>
-                  <li>Real-time order tracking for enhanced user experience</li>
+                  <li>Real-time order tracking</li>
                 </ul>
                 <div className="mt-4 flex flex-wrap gap-2">
-                  <span className="bg-purple-100 text-purple-800 px-3 py-1 rounded-full text-sm">
-                    React
-                  </span>
-                  <span className="bg-purple-100 text-purple-800 px-3 py-1 rounded-full text-sm">
-                    Node.js
-                  </span>
-                  <span className="bg-purple-100 text-purple-800 px-3 py-1 rounded-full text-sm">
-                    Firebase
-                  </span>
+                  {[
+                    {
+                      name: "React",
+                      icon: <SiReact className="w-4 h-4 text-blue-500" />,
+                    },
+                    {
+                      name: "Node.js",
+                      icon: <SiNodedotjs className="w-4 h-4 text-green-600" />,
+                    },
+                    {
+                      name: "Firebase",
+                      icon: <SiFirebase className="w-4 h-4 text-yellow-500" />,
+                    },
+                    {
+                      name: "CSS",
+                      icon: <SiCss3 className="w-4 h-4 text-blue-500" />,
+                    },
+                  ].map((tech) => (
+                    <span
+                      key={tech.name}
+                      className="bg-gray-50 text-gray-800 px-3 py-1 rounded-full text-xs flex items-center gap-1 border border-gray-200"
+                    >
+                      {tech.icon}
+                      {tech.name}
+                    </span>
+                  ))}
+                </div>
+                <div className="mt-4 flex flex-wrap gap-3">
+                  <a
+                    href="https://github.com/Varshitcode14/Grocto"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="bg-gray-800 text-white px-4 py-2 rounded-lg hover:bg-gray-700 transition-colors flex items-center shadow-md hover:shadow-lg"
+                  >
+                    <Github className="w-4 h-4 mr-2" />
+                    <span>GitHub Repo</span>
+                  </a>
+                  <a
+                    href="https://grocto-frontend.onrender.com/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition-colors flex items-center shadow-md hover:shadow-lg"
+                  >
+                    <ExternalLink className="w-4 h-4 mr-2" />
+                    <span>Live Demo</span>
+                  </a>
                 </div>
               </div>
             </div>
@@ -524,27 +644,35 @@ export default function PortfolioLayout() {
             <h1 className="text-2xl font-bold text-gray-800 mb-6">Resume</h1>
 
             <div className="bg-white rounded-lg shadow-sm p-8">
-              <div className="text-center mb-8">
+              {/* <div className="text-center mb-8">
                 <FileText className="w-12 h-12 text-blue-500 mx-auto mb-4" />
-                <p className="text-gray-600 max-w-2xl mx-auto">
-                  View or download my complete resume for detailed information
-                  about my education, skills, projects, and achievements.
-                </p>
+              </div> */}
+
+              {/* PDF Viewer */}
+              <div className="bg-gray-50 border border-gray-300 rounded-lg w-full min-h-[70vh]">
+                <iframe
+                  src="/Shivam_Inter_IIT14_0 (1).pdf"
+                  className="w-full h-full min-h-[70vh]"
+                  frameBorder="0"
+                >
+                  <p className="p-4 text-center text-gray-600">
+                    Your browser does not support PDFs.
+                    <a
+                      href="/Shivam_Inter_IIT14_0 (1).pdf"
+                      className="text-blue-600 hover:underline ml-1"
+                      download
+                    >
+                      Download the resume instead
+                    </a>
+                  </p>
+                </iframe>
               </div>
 
-              <div className="flex flex-col md:flex-row gap-6 justify-center">
-                <button
-                  className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center"
-                  onClick={() => setShowResume(true)}
-                >
-                  <FileText className="w-5 h-5 mr-2" />
-                  <span>View Resume</span>
-                </button>
-
+              <div className="mt-6 flex justify-center">
                 <a
-                  href={resumeUrl}
+                  href="/Shivam_Inter_IIT14_0 (1).pdf"
                   download="Shivam_Saxena_Resume.pdf"
-                  className="border border-blue-600 text-blue-600 px-6 py-3 rounded-lg hover:bg-blue-50 transition-colors flex items-center justify-center"
+                  className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors flex items-center"
                 >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -560,7 +688,7 @@ export default function PortfolioLayout() {
                       d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
                     />
                   </svg>
-                  <span>Download Resume</span>
+                  <span>Download</span>
                 </a>
               </div>
             </div>
@@ -575,16 +703,17 @@ export default function PortfolioLayout() {
             </h1>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="bg-white rounded-lg shadow-sm p-6">
-                <h2 className="text-xl font-semibold text-gray-800 mb-4">
+              <div className="bg-white rounded-xl shadow-md p-6 hover:shadow-lg transition-shadow duration-300">
+                <h2 className="text-xl font-semibold text-gray-800 mb-4 flex items-center">
+                  <FileText className="w-5 h-5 mr-2 text-indigo-600" />
                   Certifications
                 </h2>
                 <ul className="space-y-3">
-                  <li className="flex items-start">
-                    <div className="bg-blue-100 p-2 rounded-full mr-3">
+                  <li className="flex items-start p-3 rounded-lg hover:bg-indigo-50 transition-colors">
+                    <div className="bg-indigo-100 p-2 rounded-full mr-3">
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
-                        className="h-5 w-5 text-blue-600"
+                        className="h-5 w-5 text-indigo-600"
                         viewBox="0 0 20 20"
                         fill="currentColor"
                       >
@@ -599,11 +728,11 @@ export default function PortfolioLayout() {
                       PitchTember'24, Incubation Centre
                     </span>
                   </li>
-                  <li className="flex items-start">
-                    <div className="bg-blue-100 p-2 rounded-full mr-3">
+                  <li className="flex items-start p-3 rounded-lg hover:bg-indigo-50 transition-colors">
+                    <div className="bg-indigo-100 p-2 rounded-full mr-3">
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
-                        className="h-5 w-5 text-blue-600"
+                        className="h-5 w-5 text-indigo-600"
                         viewBox="0 0 20 20"
                         fill="currentColor"
                       >
@@ -616,11 +745,11 @@ export default function PortfolioLayout() {
                     </div>
                     <span className="text-gray-600">Byteverse Hackathon</span>
                   </li>
-                  <li className="flex items-start">
-                    <div className="bg-blue-100 p-2 rounded-full mr-3">
+                  <li className="flex items-start p-3 rounded-lg hover:bg-indigo-50 transition-colors">
+                    <div className="bg-indigo-100 p-2 rounded-full mr-3">
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
-                        className="h-5 w-5 text-blue-600"
+                        className="h-5 w-5 text-indigo-600"
                         viewBox="0 0 20 20"
                         fill="currentColor"
                       >
@@ -638,16 +767,17 @@ export default function PortfolioLayout() {
                 </ul>
               </div>
 
-              <div className="bg-white rounded-lg shadow-sm p-6">
-                <h2 className="text-xl font-semibold text-gray-800 mb-4">
+              <div className="bg-white rounded-xl shadow-md p-6 hover:shadow-lg transition-shadow duration-300">
+                <h2 className="text-xl font-semibold text-gray-800 mb-4 flex items-center">
+                  <User className="w-5 h-5 mr-2 text-indigo-600" />
                   Positions of Responsibility
                 </h2>
                 <ul className="space-y-3">
-                  <li className="flex items-start">
-                    <div className="bg-green-100 p-2 rounded-full mr-3">
+                  <li className="flex items-start p-3 rounded-lg hover:bg-indigo-50 transition-colors">
+                    <div className="bg-indigo-100 p-2 rounded-full mr-3">
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
-                        className="h-5 w-5 text-green-600"
+                        className="h-5 w-5 text-indigo-600"
                         viewBox="0 0 20 20"
                         fill="currentColor"
                       >
@@ -662,11 +792,11 @@ export default function PortfolioLayout() {
                       Member, Web and Design Society, IIT Bhubaneswar
                     </span>
                   </li>
-                  <li className="flex items-start">
-                    <div className="bg-green-100 p-2 rounded-full mr-3">
+                  <li className="flex items-start p-3 rounded-lg hover:bg-indigo-50 transition-colors">
+                    <div className="bg-indigo-100 p-2 rounded-full mr-3">
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
-                        className="h-5 w-5 text-green-600"
+                        className="h-5 w-5 text-indigo-600"
                         viewBox="0 0 20 20"
                         fill="currentColor"
                       >
@@ -681,11 +811,11 @@ export default function PortfolioLayout() {
                       Member, Neuromancers, IIT Bhubaneswar
                     </span>
                   </li>
-                  <li className="flex items-start">
-                    <div className="bg-green-100 p-2 rounded-full mr-3">
+                  <li className="flex items-start p-3 rounded-lg hover:bg-indigo-50 transition-colors">
+                    <div className="bg-indigo-100 p-2 rounded-full mr-3">
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
-                        className="h-5 w-5 text-green-600"
+                        className="h-5 w-5 text-indigo-600"
                         viewBox="0 0 20 20"
                         fill="currentColor"
                       >
@@ -702,340 +832,10 @@ export default function PortfolioLayout() {
                   </li>
                 </ul>
               </div>
-
-              <div className="bg-white rounded-lg shadow-sm p-6 md:col-span-2">
-                <h2 className="text-xl font-semibold text-gray-800 mb-4">
-                  Extra-Curricular Activities
-                </h2>
-                <ul className="space-y-3">
-                  <li className="flex items-start">
-                    <div className="bg-purple-100 p-2 rounded-full mr-3">
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        className="h-5 w-5 text-purple-600"
-                        viewBox="0 0 20 20"
-                        fill="currentColor"
-                      >
-                        <path
-                          fillRule="evenodd"
-                          d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                          clipRule="evenodd"
-                        />
-                      </svg>
-                    </div>
-                    <span className="text-gray-600">
-                      Approached judges and mentors to ensure expert evaluation
-                      and guidance for Code Relay 3.0
-                    </span>
-                  </li>
-                  <li className="flex items-start">
-                    <div className="bg-purple-100 p-2 rounded-full mr-3">
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        className="h-5 w-5 text-purple-600"
-                        viewBox="0 0 20 20"
-                        fill="currentColor"
-                      >
-                        <path
-                          fillRule="evenodd"
-                          d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                          clipRule="evenodd"
-                        />
-                      </svg>
-                    </div>
-                    <span className="text-gray-600">
-                      Coordinated sponsorship outreach and public engagement to
-                      enhance event visibility and participation
-                    </span>
-                  </li>
-                </ul>
-              </div>
             </div>
           </div>
         )}
       </div>
-
-      {/* Resume PDF Viewer Modal */}
-      {showResume && (
-        <div className="fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-lg max-w-4xl w-full max-h-[90vh] overflow-hidden flex flex-col">
-            <div className="flex justify-between items-center p-4 border-b">
-              <h2 className="text-xl font-semibold text-gray-800">
-                Shivam Saxena - Resume
-              </h2>
-              <button
-                onClick={() => setShowResume(false)}
-                className="text-gray-500 hover:text-gray-700"
-              >
-                <X className="w-6 h-6" />
-              </button>
-            </div>
-
-            <div className="flex-1 overflow-auto p-4">
-              {/* Simulated PDF Viewer */}
-              <div className="bg-gray-100 border border-gray-300 rounded-lg w-full min-h-[70vh] flex flex-col">
-                {/* PDF Navigation */}
-                <div className="flex justify-between items-center p-3 bg-gray-200 border-b border-gray-300">
-                  <div className="flex space-x-2">
-                    <button
-                      onClick={() => handleResumeNavigation("prev")}
-                      disabled={resumePage === 1}
-                      className={`p-1 rounded ${
-                        resumePage === 1
-                          ? "text-gray-400"
-                          : "text-gray-700 hover:bg-gray-300"
-                      }`}
-                    >
-                      <ChevronLeft className="w-5 h-5" />
-                    </button>
-                    <button
-                      onClick={() => handleResumeNavigation("next")}
-                      disabled={resumePage === 2}
-                      className={`p-1 rounded ${
-                        resumePage === 2
-                          ? "text-gray-400"
-                          : "text-gray-700 hover:bg-gray-300"
-                      }`}
-                    >
-                      <ChevronRight className="w-5 h-5" />
-                    </button>
-                  </div>
-                  <div className="text-sm text-gray-600">
-                    Page {resumePage} of 2
-                  </div>
-                  <div>
-                    <a
-                      href={resumeUrl}
-                      download="Shivam_Saxena_Resume.pdf"
-                      className="text-blue-600 hover:text-blue-800 text-sm flex items-center"
-                    >
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        className="h-4 w-4 mr-1"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
-                        />
-                      </svg>
-                      Download
-                    </a>
-                  </div>
-                </div>
-
-                {/* PDF Content */}
-                <div className="flex-1 overflow-auto p-4 bg-white">
-                  {resumePage === 1 ? (
-                    <div className="font-sans text-gray-800">
-                      <div className="text-center mb-6">
-                        <h1 className="text-3xl font-bold">Shivam Saxena</h1>
-                        <div className="flex justify-center items-center flex-wrap gap-4 mt-2 text-gray-600">
-                          <span>Email: 24ee01074@iitbbs.ac.in</span>
-                          <span>GitHub: github.com/Saxena-Shivam</span>
-                          <span>
-                            LinkedIn: linkedin.com/in/shivam-saxena-aa8754289/
-                          </span>
-                          <span>Phone: (+91) 9507250528</span>
-                        </div>
-                      </div>
-
-                      <div className="mb-6">
-                        <h2 className="text-xl font-bold border-b border-gray-300 pb-2 mb-3">
-                          Education
-                        </h2>
-                        <table className="w-full border-collapse">
-                          <thead>
-                            <tr className="bg-gray-100">
-                              <th className="border border-gray-300 p-2 text-left">
-                                Year
-                              </th>
-                              <th className="border border-gray-300 p-2 text-left">
-                                Degree/Examination
-                              </th>
-                              <th className="border border-gray-300 p-2 text-left">
-                                University/Board
-                              </th>
-                              <th className="border border-gray-300 p-2 text-left">
-                                %/CGPA
-                              </th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            <tr>
-                              <td className="border border-gray-300 p-2">
-                                2028*
-                              </td>
-                              <td className="border border-gray-300 p-2">
-                                Electrical Engineering
-                              </td>
-                              <td className="border border-gray-300 p-2">
-                                Indian Institute of Technology Bhubaneswar
-                              </td>
-                              <td className="border border-gray-300 p-2">
-                                8.62
-                              </td>
-                            </tr>
-                            <tr>
-                              <td className="border border-gray-300 p-2">
-                                2023
-                              </td>
-                              <td className="border border-gray-300 p-2">
-                                Intermediate (12th standard)
-                              </td>
-                              <td className="border border-gray-300 p-2">
-                                Param Gyan Niketan
-                              </td>
-                              <td className="border border-gray-300 p-2">
-                                89.2%
-                              </td>
-                            </tr>
-                            <tr>
-                              <td className="border border-gray-300 p-2">
-                                2021
-                              </td>
-                              <td className="border border-gray-300 p-2">
-                                Secondary School Certificate (10th standard)
-                              </td>
-                              <td className="border border-gray-300 p-2">
-                                Manas Prabha Public School
-                              </td>
-                              <td className="border border-gray-300 p-2">
-                                85.8%
-                              </td>
-                            </tr>
-                          </tbody>
-                        </table>
-                      </div>
-
-                      <div className="mb-6">
-                        <h2 className="text-xl font-bold border-b border-gray-300 pb-2 mb-3">
-                          Projects
-                        </h2>
-                        <div className="mb-4">
-                          <h3 className="font-bold">UniCom Project</h3>
-                          <ul className="list-disc pl-5 mt-1">
-                            <li>
-                              Full-stack app for Requestors and Receivers with
-                              auth and real-time status tracking
-                            </li>
-                            <li>
-                              Features automated email reminders for pending
-                              requests using Node-cron and Nodemailer
-                            </li>
-                            <li>
-                              Responsive UI with role-based dashboards built in
-                              React and Tailwind CSS
-                            </li>
-                            <li>
-                              Optimized database schema for efficient storage
-                              and retrieval
-                            </li>
-                          </ul>
-                        </div>
-
-                        <div className="mb-4">
-                          <h3 className="font-bold">Rental Booking</h3>
-                          <ul className="list-disc pl-5 mt-1">
-                            <li>
-                              Developed a full-stack property rental platform
-                              with authentication, booking, and wishlist
-                              features
-                            </li>
-                            <li>
-                              Implemented search, filtering, and an interactive
-                              map for seamless property discovery
-                            </li>
-                          </ul>
-                        </div>
-                      </div>
-                    </div>
-                  ) : (
-                    <div className="font-sans text-gray-800">
-                      <div className="mb-6">
-                        <h3 className="font-bold">
-                          Campus Groceries: (Team Project)
-                        </h3>
-                        <ul className="list-disc pl-5 mt-1">
-                          <li>
-                            Designed an intuitive grocery browsing interface
-                            with seamless ordering optimized for college
-                            campuses
-                          </li>
-                          <li>
-                            Developed real-time order tracking for an enhanced
-                            user experience
-                          </li>
-                        </ul>
-                      </div>
-
-                      <div className="mb-6">
-                        <h3 className="font-bold">
-                          Hello College : (Team Project)
-                        </h3>
-                        <ul className="list-disc pl-5 mt-1">
-                          <li>
-                            Developed a user-friendly full-stack website to
-                            solve user problems and foster a student community
-                          </li>
-                          <li>
-                            Integrated study materials, resources, and
-                            interactive forums for student engagement
-                          </li>
-                        </ul>
-                      </div>
-
-                      <div className="mb-6">
-                        <h2 className="text-xl font-bold border-b border-gray-300 pb-2 mb-3">
-                          Technical Skills
-                        </h2>
-                        <div className="grid grid-cols-2 gap-4">
-                          <div>
-                            <h3 className="font-bold">
-                              Programming Languages:
-                            </h3>
-                            <p>C++, C, Javascript, Python</p>
-                          </div>
-                          <div>
-                            <h3 className="font-bold">Developer Tools:</h3>
-                            <p>
-                              VS Code, Dev C++, Atom, Hyper, Git Bash, Remix
-                              IDE, Postman
-                            </p>
-                          </div>
-                          <div>
-                            <h3 className="font-bold">Web Development:</h3>
-                            <p>
-                              Next.js, React.js, Express.js, Node.js,
-                              Javascript, Tailwind, CSS, HTML, Servlet, JSP
-                            </p>
-                          </div>
-                          <div>
-                            <h3 className="font-bold">Databases:</h3>
-                            <p>MySQL, MongoDB</p>
-                          </div>
-                          <div>
-                            <h3 className="font-bold">Coursework:</h3>
-                            <p>Object Oriented Programming</p>
-                          </div>
-                          <div>
-                            <h3 className="font-bold">Other:</h3>
-                            <p>Matlab, Logisim, EMU8086</p>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  )}
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 }

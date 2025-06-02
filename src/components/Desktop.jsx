@@ -38,9 +38,9 @@ function AllAppsOverlay({ show, onClose, onOpenApp, apps }) {
   if (!show) return null;
   return (
     <div className="fixed inset-0 bg-black/80 z-50 flex flex-col items-center justify-center">
-      <div className="bg-white/10 rounded-xl p-8 shadow-2xl max-w-4xl w-full">
-        <div className="flex justify-between items-center mb-6">
-          <span className="text-2xl text-white font-bold">
+      <div className="bg-white/10 rounded-xl p-4 sm:p-8 shadow-2xl max-w-4xl w-full">
+        <div className="flex justify-between items-center mb-4 sm:mb-6">
+          <span className="text-xl sm:text-2xl text-white font-bold">
             All Applications
           </span>
           <button
@@ -50,11 +50,11 @@ function AllAppsOverlay({ show, onClose, onOpenApp, apps }) {
             ×
           </button>
         </div>
-        <div className="grid grid-cols-4 gap-8">
+        <div className="grid grid-cols-3 sm:grid-cols-4 gap-4 sm:gap-8">
           {apps.map((app) => (
             <button
               key={app.id}
-              className="flex flex-col items-center space-y-2 p-4 rounded-lg hover:bg-white/20 transition"
+              className="flex flex-col items-center space-y-2 p-2 sm:p-4 rounded-lg hover:bg-white/20 transition"
               onClick={() => {
                 onOpenApp(app);
                 onClose();
@@ -63,11 +63,17 @@ function AllAppsOverlay({ show, onClose, onOpenApp, apps }) {
               {app.icon &&
               app.icon.startsWith &&
               app.icon.startsWith("http") ? (
-                <img src={app.icon} alt={app.name} className="w-12 h-12" />
+                <img
+                  src={app.icon}
+                  alt={app.name}
+                  className="w-10 h-10 sm:w-12 sm:h-12"
+                />
               ) : (
-                <span className="text-4xl">{app.icon}</span>
+                <span className="text-3xl sm:text-4xl">{app.icon}</span>
               )}
-              <span className="text-white text-sm font-medium">{app.name}</span>
+              <span className="text-white text-xs sm:text-sm font-medium">
+                {app.name}
+              </span>
             </button>
           ))}
         </div>
@@ -174,7 +180,7 @@ function DesktopContent({ currentTime, onShutdown, onLock }) {
   };
 
   return (
-    <div className="h-screen w-screen overflow-hidden relative select-none">
+    <div className="h-screen w-screen overflow-hidden relative select-none pb-16 sm:pb-0">
       {/* Desktop Background */}
       <DesktopBackground />
 
@@ -207,7 +213,6 @@ function DesktopContent({ currentTime, onShutdown, onLock }) {
     </div>
   );
 }
-
 export default function Desktop({ onShutdown, onLock }) {
   const [currentTime, setCurrentTime] = useState(new Date());
 

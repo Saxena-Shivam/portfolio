@@ -5,6 +5,7 @@ import Desktop from "./components/Desktop.jsx";
 import BootScreen from "./components/BootScreen.jsx";
 import ShutdownScreen from "./components/ShutdownScreen.jsx";
 import PowerOffScreen from "./components/PowerOffScreen.jsx";
+import { ChromeAppProvider } from "./contexts/ChromeAppContext.jsx";
 
 function App() {
   const [systemState, setSystemState] = useState("booting");
@@ -63,7 +64,11 @@ function App() {
     return <ShutdownScreen />;
   }
 
-  return <Desktop onShutdown={handleShutdown} onLock={handleLock} />;
+  return (
+    <ChromeAppProvider>
+      <Desktop onShutdown={handleShutdown} onLock={handleLock} />
+    </ChromeAppProvider>
+  );
 }
 
 export default App;

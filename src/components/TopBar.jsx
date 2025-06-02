@@ -64,25 +64,28 @@ export default function TopBar({ currentTime, onShutdown, onLock }) {
   };
 
   return (
-    <div className="absolute top-0 left-0 right-0 h-8 bg-black/90 backdrop-blur-md text-white text-sm flex items-center justify-between px-4 z-50 border-b border-white/10">
-      <div className="flex items-center space-x-4">
-        <button className="hover:bg-white/10 px-3 py-1 rounded transition-colors">
+    <div className="fixed top-0 left-0 right-0 h-10 sm:h-8 bg-black/90 backdrop-blur-md text-white text-xs sm:text-sm flex items-center justify-between px-2 sm:px-4 z-50 border-b border-white/10">
+      {/* Left: Activities/Applications */}
+      <div className="flex items-center space-x-2 sm:space-x-4">
+        <button className="hover:bg-white/10 px-2 sm:px-3 py-1 rounded transition-colors text-xs sm:text-sm">
           Activities
         </button>
-        <button className="hover:bg-white/10 px-2 py-1 rounded transition-colors">
+        <button className="hover:bg-white/10 px-2 py-1 rounded transition-colors text-xs sm:text-sm">
           Applications
         </button>
       </div>
 
-      <div className="flex items-center space-x-2 font-medium">
-        <span>{formatDate(currentTime)}</span>
+      {/* Center: Date/Time (hide date on xs) */}
+      <div className="flex items-center space-x-1 font-medium">
+        <span className="hidden xs:inline">{formatDate(currentTime)}</span>
         <span>{formatTime(currentTime)}</span>
       </div>
 
+      {/* Right: Status, Settings, User */}
       <div className="flex items-center space-x-1 relative">
         {/* Status Section */}
         <div
-          className="flex items-center space-x-1 px-2 py-1 rounded hover:bg-white/10 transition-colors cursor-pointer"
+          className="flex items-center space-x-1 px-1 sm:px-2 py-1 rounded hover:bg-white/10 transition-colors cursor-pointer"
           onClick={() => setShowStatusMenu((v) => !v)}
           ref={statusMenuRef}
         >
@@ -94,7 +97,7 @@ export default function TopBar({ currentTime, onShutdown, onLock }) {
         {/* Status Dropdown */}
         {showStatusMenu && (
           <div
-            className="absolute right-16 top-8 bg-gray-800 border border-gray-600 rounded-lg shadow-xl py-2 min-w-56 z-50 animate-slideIn"
+            className="absolute right-16 top-10 sm:top-8 bg-gray-800 border border-gray-600 rounded-lg shadow-xl py-2 min-w-44 sm:min-w-56 z-50 animate-slideIn"
             ref={statusMenuRef}
           >
             <div className="px-4 py-2 border-b border-gray-600 flex items-center space-x-2">
@@ -115,7 +118,7 @@ export default function TopBar({ currentTime, onShutdown, onLock }) {
           </div>
         )}
 
-        {/* Settings button in top bar */}
+        {/* Settings button */}
         <button
           className="p-1 hover:bg-white/10 rounded transition-colors"
           title="Settings"
@@ -124,6 +127,7 @@ export default function TopBar({ currentTime, onShutdown, onLock }) {
           <Settings className="w-4 h-4" />
         </button>
 
+        {/* User/Power menu */}
         <div className="relative">
           <button
             onClick={() => setShowPowerMenu(!showPowerMenu)}
@@ -131,11 +135,10 @@ export default function TopBar({ currentTime, onShutdown, onLock }) {
           >
             <User className="w-4 h-4" />
           </button>
-
           {showPowerMenu && (
             <div
               ref={powerMenuRef}
-              className="absolute right-0 top-8 bg-gray-800 border border-gray-600 rounded-lg shadow-xl py-2 min-w-48 z-50 animate-slideIn"
+              className="absolute right-0 top-10 sm:top-8 bg-gray-800 border border-gray-600 rounded-lg shadow-xl py-2 min-w-40 sm:min-w-48 z-50 animate-slideIn"
             >
               <div className="px-4 py-2 border-b border-gray-600">
                 <div className="font-medium">Shivam Saxena</div>
@@ -143,8 +146,6 @@ export default function TopBar({ currentTime, onShutdown, onLock }) {
                   24ee01074@iitbbs.ac.in
                 </div>
               </div>
-
-              {/* Settings in power menu */}
               <button
                 className="w-full px-4 py-2 text-left hover:bg-gray-700 transition-colors flex items-center space-x-2"
                 onClick={() => {
@@ -155,7 +156,6 @@ export default function TopBar({ currentTime, onShutdown, onLock }) {
                 <Settings className="w-4 h-4" />
                 <span>Settings</span>
               </button>
-
               <button
                 className="w-full px-4 py-2 text-left hover:bg-gray-700 transition-colors flex items-center space-x-2"
                 onClick={onLock}
@@ -163,7 +163,6 @@ export default function TopBar({ currentTime, onShutdown, onLock }) {
                 <LogOut className="w-4 h-4" />
                 <span>Lock Screen</span>
               </button>
-
               <div className="border-t border-gray-600 mt-2 pt-2">
                 <button
                   onClick={onShutdown}

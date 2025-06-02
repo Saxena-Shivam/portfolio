@@ -63,10 +63,12 @@ export default function DesktopIcons() {
     setContextMenu(null);
   };
 
+  // Responsive: grid for mobile/tablet, absolute for desktop
   return (
     <>
+      {/* Desktop: absolute icons */}
       <div
-        className="absolute inset-0"
+        className="absolute inset-0 hidden sm:block"
         onContextMenu={(e) => handleRightClick(e)}
       >
         {desktopItems.map((item) => (
@@ -126,8 +128,55 @@ export default function DesktopIcons() {
           </div>
         ))}
       </div>
-
-      {/* Context Menu */}
+      {/* Mobile/Tablet: grid at top */}
+      <div className="sm:hidden w-full absolute top-12 left-0 flex flex-wrap justify-center gap-2 px-2 z-30">
+        {desktopItems.map((item) => (
+          <div
+            key={item.id}
+            className="flex flex-col items-center cursor-pointer group select-none"
+            style={{
+              width: 64,
+            }}
+            onDoubleClick={() => handleDoubleClick(item)}
+            onContextMenu={(e) => handleRightClick(e, item.id)}
+          >
+            <div className="w-12 h-12 bg-white/10 hover:bg-white/20 rounded-xl flex items-center justify-center transition-all duration-200 hover:scale-110 backdrop-blur-sm border border-white/20">
+              {item.icon.startsWith("http") ? (
+                <img
+                  src={item.icon || "/placeholder.svg"}
+                  alt={item.name}
+                  className="w-8 h-8"
+                />
+              ) : (
+                <span className="text-2xl">{item.icon}</span>
+              )}
+            </div>
+            {isRenaming === item.id ? (
+              <input
+                type="text"
+                defaultValue={item.name}
+                className="text-white text-xs mt-2 text-center max-w-16 bg-black/50 rounded px-1"
+                onBlur={(e) => {
+                  renameItem(item.id, e.target.value);
+                  setIsRenaming(null);
+                }}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    renameItem(item.id, e.currentTarget.value);
+                    setIsRenaming(null);
+                  }
+                }}
+                autoFocus
+              />
+            ) : (
+              <span className="text-white text-xs mt-2 text-center max-w-16 group-hover:text-blue-200 transition-colors drop-shadow-lg">
+                {item.name}
+              </span>
+            )}
+          </div>
+        ))}
+      </div>
+      {/* Context Menu (unchanged) */}
       {contextMenu && (
         <div
           className="fixed bg-gray-800 border border-gray-600 rounded-lg shadow-xl py-2 z-50 min-w-48 animate-slideIn"
