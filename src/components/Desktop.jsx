@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from "react";
 import TopBar from "./TopBar";
-import Sidebar from "./Sidebar";
 import DesktopIcons from "./DesktopIcons";
 import WindowManager from "./WindowManager";
 import { WindowProvider, useWindows } from "../contexts/WindowContext";
@@ -21,67 +20,7 @@ import CalendarApp from "./apps/CalendarApp";
 import GitHubApp from "./apps/GitHubApp";
 import AboutApp from "./apps/AboutApp";
 import ChromeApp from "./apps/ChromeApp";
-
-// Desktop background
-function DesktopBackground() {
-  const { wallpaper } = useDesktop();
-  return (
-    <div
-      className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-      style={{ backgroundImage: `url(${wallpaper})` }}
-    />
-  );
-}
-
-// All Apps Overlay (GNOME style)
-function AllAppsOverlay({ show, onClose, onOpenApp, apps }) {
-  if (!show) return null;
-  return (
-    <div className="fixed inset-0 bg-black/80 z-50 flex flex-col items-center justify-center">
-      <div className="bg-white/10 rounded-xl p-4 sm:p-8 shadow-2xl max-w-4xl w-full">
-        <div className="flex justify-between items-center mb-4 sm:mb-6">
-          <span className="text-xl sm:text-2xl text-white font-bold">
-            All Applications
-          </span>
-          <button
-            className="text-white text-2xl px-3 py-1 rounded hover:bg-white/20"
-            onClick={onClose}
-          >
-            ×
-          </button>
-        </div>
-        <div className="grid grid-cols-3 sm:grid-cols-4 gap-4 sm:gap-8">
-          {apps.map((app) => (
-            <button
-              key={app.id}
-              className="flex flex-col items-center space-y-2 p-2 sm:p-4 rounded-lg hover:bg-white/20 transition"
-              onClick={() => {
-                onOpenApp(app);
-                onClose();
-              }}
-            >
-              {app.icon &&
-              app.icon.startsWith &&
-              app.icon.startsWith("http") ? (
-                <img
-                  src={app.icon}
-                  alt={app.name}
-                  className="w-10 h-10 sm:w-12 sm:h-12"
-                />
-              ) : (
-                <span className="text-3xl sm:text-4xl">{app.icon}</span>
-              )}
-              <span className="text-white text-xs sm:text-sm font-medium">
-                {app.name}
-              </span>
-            </button>
-          ))}
-        </div>
-      </div>
-    </div>
-  );
-}
-
+import Sidebar from "./Sidebar";
 const allApps = [
   {
     id: "chrome",
@@ -169,23 +108,69 @@ const allApps = [
   },
 ];
 
+function AllAppsMobile({ onOpenApp }) {
+  return (
+    <div className="fixed inset-0 bg-black/90 z-40 flex flex-col items-center justify-center sm:hidden">
+      <div className="w-full max-w-md mx-auto p-2 flex-1 flex flex-col justify-center">
+        <div
+          className="grid grid-cols-3 gap-4"
+          style={{
+            minHeight: "calc(100vh - 80px)", // ensure grid fills most of the screen
+            maxHeight: "calc(100vh - 80px)",
+            alignContent: "center",
+          }}
+        >
+          {allApps.map((app) => (
+            <button
+              key={app.id}
+              className="flex flex-col items-center space-y-2 p-3 rounded-xl bg-white/10 hover:bg-white/20 transition"
+              onClick={() => onOpenApp(app)}
+              style={{ minHeight: 80 }}
+            >
+              {app.icon &&
+              app.icon.startsWith &&
+              app.icon.startsWith("http") ? (
+                <img src={app.icon} alt={app.name} className="w-12 h-12" />
+              ) : (
+                <span className="text-3xl">{app.icon}</span>
+              )}
+              <span className="text-white text-xs font-medium">{app.name}</span>
+            </button>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
 function DesktopContent({ currentTime, onShutdown, onLock }) {
-  const [showAllApps, setShowAllApps] = useState(false);
-  const { openWindow } = useWindows();
+  const [mobileApp, setMobileApp] = useState(null);
+  const { openWindow, windows, closeWindow } = useWindows();
 
-  const handleOpenApp = (app) => {
-    if (app.component) {
-      openWindow(app.id, app.name, app.component);
-    }
+  // Detect mobile
+  const [isMobile, setIsMobile] = useState(false);
+  useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth < 640);
+    check();
+    window.addEventListener("resize", check);
+    return () => window.removeEventListener("resize", check);
+  }, []);
+
+  // On mobile, open app as a single full-screen window
+  const handleOpenAppMobile = (app) => {
+    setMobileApp(app);
+    openWindow(app.id, app.name, app.component);
   };
 
-  return (
-    <div className="h-screen w-screen overflow-hidden relative select-none pb-16 sm:pb-0">
-      {/* Desktop Background */}
-      <DesktopBackground />
+  // On mobile, when all windows are closed, return to home
+  useEffect(() => {
+    if (isMobile && windows.length === 0) setMobileApp(null);
+  }, [windows, isMobile]);
 
-      {/* Desktop Overlay */}
-      <div className="absolute inset-0 bg-black/10" />
+  return (
+    <div className="h-screen w-screen overflow-hidden relative select-none pb-0">
+      {/* Desktop Background */}
+      {/* You can keep your background here if you want */}
+      {/* <DesktopBackground /> */}
 
       {/* Top Bar */}
       <TopBar
@@ -194,25 +179,23 @@ function DesktopContent({ currentTime, onShutdown, onLock }) {
         onLock={onLock}
       />
 
-      {/* Sidebar with show all apps handler */}
-      <Sidebar onShowAllApps={() => setShowAllApps(true)} />
+      {/* Desktop/Tablet: Sidebar and Desktop Icons */}
+      <div className="hidden sm:block">
+        <Sidebar onShowAllApps={() => {}} />
+        <DesktopIcons />
+      </div>
 
-      {/* Desktop Icons */}
-      <DesktopIcons />
+      {/* Mobile: Show All Apps grid if no app is open */}
+      {isMobile && !mobileApp && (
+        <AllAppsMobile onOpenApp={handleOpenAppMobile} />
+      )}
 
-      {/* All Apps Overlay */}
-      <AllAppsOverlay
-        show={showAllApps}
-        onClose={() => setShowAllApps(false)}
-        onOpenApp={handleOpenApp}
-        apps={allApps}
-      />
-
-      {/* Window Manager */}
+      {/* Window Manager (windows will cover the whole screen on mobile) */}
       <WindowManager />
     </div>
   );
 }
+
 export default function Desktop({ onShutdown, onLock }) {
   const [currentTime, setCurrentTime] = useState(new Date());
 
