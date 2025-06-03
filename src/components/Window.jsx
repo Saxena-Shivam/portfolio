@@ -140,9 +140,9 @@ export default function Window({ window }) {
 
       {/* Window Content */}
       <div
-        className="flex-1 overflow-auto"
+        className="flex-1 overflow-y-auto"
         style={{
-          height: "calc(100% - 40px)",
+          height: isMobile ? "100%" : "calc(100% - 40px)",
           minHeight: 0,
           minWidth: 0,
           padding: isMobile ? 4 : 0,
