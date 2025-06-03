@@ -170,12 +170,9 @@ export default function PortfolioLayout() {
                       About Me
                     </h2>
                     <p className="text-gray-600 leading-relaxed">
-                      Electrical Engineering student at IIT Bhubaneswar
-                      passionate about full-stack development. I build efficient
-                      web applications using modern technologies like React,
-                      Node.js, and MongoDB. With competitive programming
-                      experience, I create innovative solutions that enhance
-                      user experiences.
+                      Electrical Engineering student at IIT Bhubaneswar,
+                      passionate about full-stack development and competitive
+                      programming.
                     </p>
                   </section>
 
@@ -384,6 +381,10 @@ export default function PortfolioLayout() {
                       name: "CSS",
                       icon: <SiCss3 className="w-5 h-5 text-blue-500" />,
                     },
+                    {
+                      name: "servlet",
+                      icon: <Code2 className="w-5 h-5 text-gray-600" />,
+                    },
                   ].map((skill) => (
                     <span
                       key={skill.name}
@@ -416,8 +417,8 @@ export default function PortfolioLayout() {
                       icon: <SiGit className="w-5 h-5 text-orange-600" />,
                     },
                     {
-                      name: "Firebase",
-                      icon: <SiFirebase className="w-5 h-5 text-yellow-500" />,
+                      name: "GitHub",
+                      icon: <Github className="w-5 h-5 text-gray-800" />,
                     },
                   ].map((skill) => (
                     <span
@@ -430,7 +431,46 @@ export default function PortfolioLayout() {
                   ))}
                 </div>
               </div>
-
+              <div className="bg-white rounded-xl shadow-lg p-6 hover:shadow-xl transition-all duration-300 border border-gray-100">
+                <h2 className="text-xl font-semibold text-gray-800 mb-4 flex items-center">
+                  <Code2 className="w-5 h-5 mr-2 text-indigo-600" />
+                  Developer Tools
+                </h2>
+                <div className="flex flex-wrap gap-3">
+                  {[
+                    {
+                      name: "Postman",
+                      icon: (
+                        <img
+                          src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/postman/postman-original.svg"
+                          alt="Postman"
+                          className="w-5 h-5"
+                        />
+                      ),
+                    },
+                    {
+                      name: "Git Bash",
+                      icon: <SiGit className="w-5 h-5 text-orange-600" />,
+                    },
+                    {
+                      name: "Remix IDE",
+                      icon: <Code2 className="w-5 h-5 text-gray-600" />,
+                    },
+                    {
+                      name: "Hyper",
+                      icon: <Code2 className="w-5 h-5 text-gray-600" />,
+                    },
+                  ].map((skill) => (
+                    <span
+                      key={skill.name}
+                      className="bg-gray-50 text-gray-800 px-3 py-2 rounded-lg text-sm flex items-center gap-2 border border-gray-200 hover:shadow-md transition-all"
+                    >
+                      {skill.icon}
+                      {skill.name}
+                    </span>
+                  ))}
+                </div>
+              </div>
               <div className="bg-white rounded-xl shadow-lg p-6 hover:shadow-xl transition-all duration-300 border border-gray-100">
                 <h2 className="text-xl font-semibold text-gray-800 mb-4 flex items-center">
                   <Code2 className="w-5 h-5 mr-2 text-indigo-600" />
