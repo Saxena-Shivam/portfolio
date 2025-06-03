@@ -11,6 +11,8 @@ import {
   Repeat,
   Heart,
   Search,
+  Home,
+  Library,
 } from "lucide-react";
 
 export default function SpotifyApp() {
@@ -19,7 +21,9 @@ export default function SpotifyApp() {
   const [duration, setDuration] = useState(0);
   const [volume, setVolume] = useState(75);
   const [currentTrack, setCurrentTrack] = useState(0);
+  const [isExpanded, setIsExpanded] = useState(false);
   const audioRef = useRef(null);
+  const progressBarRef = useRef(null);
 
   // Sample tracks with audio URLs
   const tracks = [
@@ -86,12 +90,12 @@ export default function SpotifyApp() {
 
   const nextTrack = () => {
     setCurrentTrack((prev) => (prev + 1) % tracks.length);
-    setIsPlaying(false);
+    setIsPlaying(true);
   };
 
   const prevTrack = () => {
     setCurrentTrack((prev) => (prev - 1 + tracks.length) % tracks.length);
-    setIsPlaying(false);
+    setIsPlaying(true);
   };
 
   const formatTime = (seconds) => {
@@ -105,17 +109,32 @@ export default function SpotifyApp() {
     const audio = audioRef.current;
     if (!audio || !duration) return;
 
-    const rect = e.currentTarget.getBoundingClientRect();
-    const percent = (e.clientX - rect.left) / rect.width;
+    const progressBar = progressBarRef.current;
+    const rect = progressBar.getBoundingClientRect();
+    const percent = Math.min(
+      1,
+      Math.max(0, (e.clientX - rect.left) / rect.width)
+    );
     const newTime = percent * duration;
     audio.currentTime = newTime;
     setCurrentTime(newTime);
   };
 
+  const handleVolumeChange = (e) => {
+    const newVolume = parseInt(e.target.value);
+    setVolume(newVolume);
+    if (audioRef.current) {
+      audioRef.current.volume = newVolume / 100;
+    }
+  };
+
+  // Mobile-specific interactions
+  const toggleExpand = () => setIsExpanded(!isExpanded);
+
   return (
     <div className="h-full bg-black text-white flex flex-col">
-      {/* Header */}
-      <div className="flex items-center justify-between p-4 border-b border-gray-800">
+      {/* Header - Hidden on mobile */}
+      <div className="hidden md:flex items-center justify-between p-4 border-b border-gray-800">
         <div className="flex items-center space-x-4">
           <img
             src="https://upload.wikimedia.org/wikipedia/commons/8/84/Spotify_icon.svg"
@@ -137,9 +156,9 @@ export default function SpotifyApp() {
         </div>
       </div>
 
-      <div className="flex flex-1">
-        {/* Sidebar */}
-        <div className="w-64 bg-gray-900 p-4 border-r border-gray-800">
+      <div className="flex flex-1 overflow-hidden">
+        {/* Sidebar - Hidden on mobile */}
+        <div className="hidden md:block w-64 bg-gray-900 p-4 border-r border-gray-800">
           <nav className="space-y-2">
             <div className="font-semibold text-white py-2 px-3 bg-gray-800 rounded-lg">
               Home
@@ -171,59 +190,106 @@ export default function SpotifyApp() {
         </div>
 
         {/* Main Content */}
-        <div className="flex-1 flex flex-col">
-          {/* Now Playing */}
-          <div className="flex-1 flex items-center justify-center p-8">
-            <div className="text-center max-w-md">
-              <div className="w-64 h-64 bg-gradient-to-br from-green-500 to-green-700 rounded-lg mb-6 mx-auto shadow-2xl overflow-hidden">
-                <img
-                  src={currentSong.image || "/placeholder.svg"}
-                  alt={currentSong.title}
-                  className="w-full h-full object-cover"
-                />
-              </div>
-
-              <h1 className="text-2xl font-bold mb-2">{currentSong.title}</h1>
-              <p className="text-lg text-gray-300 mb-1">{currentSong.artist}</p>
-              <p className="text-sm text-gray-400">{currentSong.album}</p>
-
-              <button className="mt-4 p-2 hover:bg-gray-800 rounded-full transition-colors">
-                <Heart className="w-6 h-6" />
-              </button>
+        <div className="flex-1 flex flex-col overflow-hidden">
+          {/* Mobile Header */}
+          <div className="md:hidden flex items-center justify-between p-4 border-b border-gray-800">
+            <div className="flex items-center">
+              <img
+                src="https://upload.wikimedia.org/wikipedia/commons/8/84/Spotify_icon.svg"
+                alt="Spotify"
+                className="w-8 h-8"
+              />
             </div>
+            <div className="text-xl font-bold">Now Playing</div>
+            <button>
+              <Search className="w-5 h-5" />
+            </button>
           </div>
 
-          {/* Track List */}
-          <div className="h-48 border-t border-gray-800 overflow-y-auto">
-            <div className="p-4">
-              <h3 className="text-lg font-semibold mb-4">Queue</h3>
-              {tracks.map((track, index) => (
+          {/* Now Playing - Mobile Collapsible */}
+          <div
+            className={`flex-1 flex flex-col ${
+              isExpanded ? "pb-24" : ""
+            } transition-all duration-300`}
+            onClick={toggleExpand}
+          >
+            <div className="flex-1 flex items-center justify-center p-4 md:p-8">
+              <div className="text-center w-full max-w-md">
                 <div
-                  key={track.id}
-                  className={`flex items-center space-x-3 p-2 rounded-lg cursor-pointer hover:bg-gray-800 transition-colors ${
-                    index === currentTrack ? "bg-gray-800" : ""
-                  }`}
-                  onClick={() => setCurrentTrack(index)}
+                  className={`mx-auto mb-6 transition-all duration-300 ${
+                    isExpanded ? "w-40 h-40" : "w-56 h-56 md:w-64 md:h-64"
+                  } bg-gradient-to-br from-green-500 to-green-700 rounded-lg shadow-2xl overflow-hidden`}
                 >
                   <img
-                    src={track.image || "/placeholder.svg"}
-                    alt={track.title}
-                    className="w-10 h-10 rounded"
+                    src={currentSong.image || "/placeholder.svg"}
+                    alt={currentSong.title}
+                    className="w-full h-full object-cover"
                   />
-                  <div className="flex-1">
-                    <div className="font-medium">{track.title}</div>
-                    <div className="text-sm text-gray-400">{track.artist}</div>
-                  </div>
-                  <div className="text-sm text-gray-400">{track.duration}</div>
                 </div>
-              ))}
+
+                <div
+                  className={`transition-all duration-300 ${
+                    isExpanded ? "opacity-0 h-0" : "opacity-100 h-auto"
+                  }`}
+                >
+                  <h1 className="text-2xl font-bold mb-2">
+                    {currentSong.title}
+                  </h1>
+                  <p className="text-lg text-gray-300 mb-1">
+                    {currentSong.artist}
+                  </p>
+                  <p className="text-sm text-gray-400">{currentSong.album}</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Track List - Hidden on mobile when expanded */}
+            <div
+              className={`h-48 border-t border-gray-800 overflow-y-auto transition-all duration-300 ${
+                isExpanded ? "h-0 opacity-0" : "opacity-100"
+              }`}
+            >
+              <div className="p-4">
+                <h3 className="text-lg font-semibold mb-4">Queue</h3>
+                {tracks.map((track, index) => (
+                  <div
+                    key={track.id}
+                    className={`flex items-center space-x-3 p-2 rounded-lg cursor-pointer hover:bg-gray-800 transition-colors ${
+                      index === currentTrack ? "bg-gray-800" : ""
+                    }`}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setCurrentTrack(index);
+                    }}
+                  >
+                    <img
+                      src={track.image || "/placeholder.svg"}
+                      alt={track.title}
+                      className="w-10 h-10 rounded"
+                    />
+                    <div className="flex-1">
+                      <div className="font-medium">{track.title}</div>
+                      <div className="text-sm text-gray-400">
+                        {track.artist}
+                      </div>
+                    </div>
+                    <div className="text-sm text-gray-400">
+                      {track.duration}
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
         </div>
       </div>
 
       {/* Player Controls */}
-      <div className="p-4 bg-gray-900 border-t border-gray-800">
+      <div
+        className={`p-4 bg-gray-900 border-t border-gray-800 transition-transform duration-300 ${
+          isExpanded ? "translate-y-full" : ""
+        }`}
+      >
         {/* Progress Bar */}
         <div className="mb-4">
           <div className="flex items-center justify-between text-sm text-gray-300 mb-2">
@@ -231,6 +297,7 @@ export default function SpotifyApp() {
             <span>{formatTime(duration)}</span>
           </div>
           <div
+            ref={progressBarRef}
             className="w-full bg-gray-600 rounded-full h-1 cursor-pointer"
             onClick={handleSeek}
           >
@@ -244,34 +311,34 @@ export default function SpotifyApp() {
         </div>
 
         {/* Control Buttons */}
-        <div className="flex items-center justify-center space-x-6 mb-4">
+        <div className="flex items-center justify-center space-x-3 md:space-x-6 mb-4">
           <button className="p-2 hover:bg-gray-800 rounded-full transition-colors">
             <Shuffle className="w-5 h-5" />
           </button>
 
           <button
             onClick={prevTrack}
-            className="p-3 hover:bg-gray-800 rounded-full transition-colors"
+            className="p-2 md:p-3 hover:bg-gray-800 rounded-full transition-colors"
           >
-            <SkipBack className="w-6 h-6" />
+            <SkipBack className="w-5 h-5 md:w-6 md:h-6" />
           </button>
 
           <button
             onClick={togglePlay}
-            className="p-4 bg-green-500 hover:bg-green-600 rounded-full transition-colors"
+            className="p-3 md:p-4 bg-green-500 hover:bg-green-600 rounded-full transition-colors"
           >
             {isPlaying ? (
-              <Pause className="w-8 h-8" />
+              <Pause className="w-6 h-6 md:w-8 md:h-8" />
             ) : (
-              <Play className="w-8 h-8" />
+              <Play className="w-6 h-6 md:w-8 md:h-8" fill="currentColor" />
             )}
           </button>
 
           <button
             onClick={nextTrack}
-            className="p-3 hover:bg-gray-800 rounded-full transition-colors"
+            className="p-2 md:p-3 hover:bg-gray-800 rounded-full transition-colors"
           >
-            <SkipForward className="w-6 h-6" />
+            <SkipForward className="w-5 h-5 md:w-6 md:h-6" />
           </button>
 
           <button className="p-2 hover:bg-gray-800 rounded-full transition-colors">
@@ -279,21 +346,69 @@ export default function SpotifyApp() {
           </button>
         </div>
 
-        {/* Volume Control */}
-        <div className="flex items-center justify-center space-x-3">
+        {/* Volume Control - Hidden on mobile */}
+        <div className="hidden md:flex items-center justify-center space-x-3">
           <Volume2 className="w-5 h-5" />
-          <div className="w-24 bg-gray-600 rounded-full h-1">
-            <div
-              className="bg-green-500 h-1 rounded-full"
-              style={{ width: `${volume}%` }}
-            ></div>
-          </div>
+          <input
+            type="range"
+            min="0"
+            max="100"
+            value={volume}
+            onChange={handleVolumeChange}
+            className="w-24 accent-green-500 cursor-pointer"
+          />
           <span className="text-sm text-gray-300 w-8">{volume}%</span>
         </div>
       </div>
 
+      {/* Mobile Bottom Navigation */}
+      <div className="md:hidden fixed bottom-0 left-0 right-0 bg-gray-900 border-t border-gray-800 flex items-center justify-around p-3 z-10">
+        <button className="p-3 text-white">
+          <Home className="w-6 h-6" />
+        </button>
+        <button className="p-3 text-gray-400">
+          <Search className="w-6 h-6" />
+        </button>
+        <button className="p-3 text-gray-400">
+          <Library className="w-6 h-6" />
+        </button>
+      </div>
+
       {/* Hidden Audio Element */}
       <audio ref={audioRef} src={currentSong.preview_url} />
+
+      {/* Mobile Mini Player - Shows when collapsed */}
+      {!isExpanded && (
+        <div
+          className="md:hidden fixed bottom-16 left-0 right-0 bg-gray-800 p-3 border-t border-gray-700 flex items-center z-10"
+          onClick={toggleExpand}
+        >
+          <img
+            src={currentSong.image || "/placeholder.svg"}
+            alt={currentSong.title}
+            className="w-10 h-10 rounded mr-3"
+          />
+          <div className="flex-1">
+            <div className="font-medium truncate">{currentSong.title}</div>
+            <div className="text-xs text-gray-400 truncate">
+              {currentSong.artist}
+            </div>
+          </div>
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              togglePlay();
+            }}
+            className="p-2"
+          >
+            {isPlaying ? (
+              <Pause className="w-5 h-5" />
+            ) : (
+              <Play className="w-5 h-5" fill="currentColor" />
+            )}
+          </button>
+        </div>
+      )}
     </div>
   );
 }
