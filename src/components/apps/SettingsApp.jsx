@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import {
   Monitor,
   Volume2,
@@ -10,13 +10,18 @@ import {
   Shield,
   Palette,
   Cpu,
+  Menu,
+  X,
 } from "lucide-react";
 import { useDesktop } from "../../contexts/DesktopContext";
 
 export default function SettingsApp() {
   const [activeSection, setActiveSection] = useState("display");
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const sidebarRef = useRef(null);
+
   const [settings, setSettings] = useState({
-    brightness: 100, // Default brightness 100
+    brightness: 100,
     volume: 80,
     theme: "dark",
     language: "en",
@@ -25,10 +30,7 @@ export default function SettingsApp() {
     autoUpdate: true,
   });
 
-  // Get wallpaper and setWallpaper from context
   const { wallpaper, setWallpaper } = useDesktop();
-
-  // List of wallpaper image filenames (change count as needed)
   const wallpaperImages = Array.from(
     { length: 10 },
     (_, i) => `/image/wallpaper${i + 1}.avif`
@@ -49,7 +51,7 @@ export default function SettingsApp() {
     setSettings((prev) => ({ ...prev, [key]: value }));
   };
 
-  // Actual brightness control
+  // Brightness effect
   useEffect(() => {
     if (typeof window !== "undefined") {
       document.body.style.filter = `brightness(${settings.brightness}%)`;
@@ -61,34 +63,113 @@ export default function SettingsApp() {
     };
   }, [settings.brightness]);
 
+  // Close sidebar on outside click (mobile only)
+  useEffect(() => {
+    if (!isMobileMenuOpen) return;
+    const handleClick = (e) => {
+      if (
+        sidebarRef.current &&
+        !sidebarRef.current.contains(e.target) &&
+        !e.target.closest(".mobile-menu-button")
+      ) {
+        setIsMobileMenuOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClick);
+    return () => document.removeEventListener("mousedown", handleClick);
+  }, [isMobileMenuOpen]);
+
+  // Prevent body scroll when sidebar is open on mobile
+  useEffect(() => {
+    if (isMobileMenuOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [isMobileMenuOpen]);
+
   return (
-    <div className="h-full bg-white flex">
+    <div className="h-full bg-white flex flex-col md:flex-row relative">
+      {/* Mobile Menu Button */}
+      <div className="md:hidden p-4 border-b border-gray-200 flex justify-between items-center">
+        <h2 className="text-lg font-semibold text-gray-800">Settings</h2>
+        <button
+          onClick={() => setIsMobileMenuOpen((v) => !v)}
+          className="mobile-menu-button p-2 rounded-lg hover:bg-gray-100"
+          aria-label="Open settings menu"
+        >
+          {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+        </button>
+      </div>
+
+      {/* Overlay for mobile sidebar */}
+      {isMobileMenuOpen && (
+        <div className="fixed inset-0 bg-black/40 z-30 md:hidden" />
+      )}
+
       {/* Sidebar */}
-      <div className="w-64 bg-gray-50 border-r border-gray-200 p-4">
-        <h2 className="text-lg font-semibold text-gray-800 mb-4">Settings</h2>
+      <div
+        ref={sidebarRef}
+        className={`fixed md:static inset-y-0 left-0 z-40 w-64 bg-gray-50 border-r border-gray-200 p-4 transform transition-transform duration-300 ease-in-out
+          ${isMobileMenuOpen ? "translate-x-0" : "-translate-x-full"}
+          md:translate-x-0 md:h-full flex-shrink-0 overflow-y-auto`}
+        style={{ maxHeight: "100vh" }}
+      >
+        <div className="flex justify-between items-center mb-4 md:mb-4">
+          <h2 className="text-lg font-semibold text-gray-800 hidden md:block">
+            Settings
+          </h2>
+          {/* Close button for mobile sidebar */}
+          <button
+            className="md:hidden p-2 rounded-lg hover:bg-gray-100"
+            onClick={() => setIsMobileMenuOpen(false)}
+            aria-label="Close sidebar"
+          >
+            <X size={24} />
+          </button>
+        </div>
         <nav className="space-y-1">
           {sections.map((section) => (
             <button
               key={section.id}
-              onClick={() => setActiveSection(section.id)}
-              className={`w-full flex items-center space-x-3 px-3 py-2 rounded-lg text-left transition-colors ${
+              onClick={() => {
+                setActiveSection(section.id);
+                setIsMobileMenuOpen(false);
+              }}
+              className={`w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg text-left transition-colors ${
                 activeSection === section.id
                   ? "bg-blue-100 text-blue-700"
                   : "text-gray-700 hover:bg-gray-100"
               }`}
             >
-              <section.icon className="w-5 h-5" />
-              <span>{section.name}</span>
+              <section.icon className="w-5 h-5 flex-shrink-0" />
+              <span className="text-sm md:text-base">{section.name}</span>
             </button>
           ))}
         </nav>
       </div>
 
       {/* Main Content */}
-      <div className="flex-1 p-6 overflow-y-auto">
+      <div className="flex-1 p-4 md:p-6 overflow-y-auto pt-16 md:pt-6">
+        {/* Current Section Header for Mobile */}
+        <div className="md:hidden mb-6 flex items-center space-x-2 text-gray-700">
+          {sections
+            .filter((s) => s.id === activeSection)
+            .map((section) => (
+              <div key={section.id} className="flex items-center space-x-2">
+                <section.icon className="w-5 h-5" />
+                <h3 className="text-lg font-semibold">{section.name}</h3>
+              </div>
+            ))}
+        </div>
+
+        {/* Display Section */}
         {activeSection === "display" && (
           <div>
-            <h3 className="text-xl font-semibold text-gray-800 mb-6">
+            <h3 className="hidden md:block text-xl font-semibold text-gray-800 mb-6">
               Display Settings
             </h3>
             <div className="space-y-6">
@@ -114,7 +195,7 @@ export default function SettingsApp() {
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Resolution
                 </label>
-                <select className="w-full p-2 border border-gray-300 rounded-lg">
+                <select className="w-full p-2 border border-gray-300 rounded-lg text-sm md:text-base">
                   <option>1920 x 1080 (Recommended)</option>
                   <option>1680 x 1050</option>
                   <option>1440 x 900</option>
@@ -124,8 +205,8 @@ export default function SettingsApp() {
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Orientation
                 </label>
-                <div className="flex space-x-4">
-                  <label className="flex items-center">
+                <div className="flex flex-wrap gap-4">
+                  <label className="flex items-center text-sm md:text-base">
                     <input
                       type="radio"
                       name="orientation"
@@ -134,13 +215,12 @@ export default function SettingsApp() {
                     />
                     Landscape
                   </label>
-                  <label className="flex items-center">
+                  <label className="flex items-center text-sm md:text-base">
                     <input type="radio" name="orientation" className="mr-2" />
                     Portrait
                   </label>
                 </div>
               </div>
-              {/* Display Pages */}
               <div className="mt-8">
                 <h4 className="font-medium text-gray-800 mb-2">Advanced</h4>
                 <ul className="list-disc list-inside text-sm text-gray-600 space-y-1">
@@ -153,9 +233,10 @@ export default function SettingsApp() {
           </div>
         )}
 
+        {/* Sound Section */}
         {activeSection === "sound" && (
           <div>
-            <h3 className="text-xl font-semibold text-gray-800 mb-6">
+            <h3 className="hidden md:block text-xl font-semibold text-gray-800 mb-6">
               Sound Settings
             </h3>
             <div className="space-y-6">
@@ -181,21 +262,18 @@ export default function SettingsApp() {
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Output Device
                 </label>
-                <select className="w-full p-2 border border-gray-300 rounded-lg">
+                <select className="w-full p-2 border border-gray-300 rounded-lg text-sm md:text-base">
                   <option>Built-in Speakers</option>
                   <option>Bluetooth Headphones</option>
                   <option>USB Headset</option>
                 </select>
               </div>
               <div>
-                <label className="flex items-center">
+                <label className="flex items-center text-sm md:text-base">
                   <input type="checkbox" defaultChecked className="mr-2" />
-                  <span className="text-sm text-gray-700">
-                    Enable system sounds
-                  </span>
+                  <span>Enable system sounds</span>
                 </label>
               </div>
-              {/* Sound Pages */}
               <div className="mt-8">
                 <h4 className="font-medium text-gray-800 mb-2">Advanced</h4>
                 <ul className="list-disc list-inside text-sm text-gray-600 space-y-1">
@@ -208,9 +286,10 @@ export default function SettingsApp() {
           </div>
         )}
 
+        {/* Network Section */}
         {activeSection === "network" && (
           <div>
-            <h3 className="text-xl font-semibold text-gray-800 mb-6">
+            <h3 className="hidden md:block text-xl font-semibold text-gray-800 mb-6">
               Network Settings
             </h3>
             <div className="space-y-6">
@@ -218,21 +297,18 @@ export default function SettingsApp() {
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Wi-Fi
                 </label>
-                <select className="w-full p-2 border border-gray-300 rounded-lg">
+                <select className="w-full p-2 border border-gray-300 rounded-lg text-sm md:text-base">
                   <option>Home Wi-Fi</option>
                   <option>Office Network</option>
                   <option>Mobile Hotspot</option>
                 </select>
               </div>
               <div>
-                <label className="flex items-center">
+                <label className="flex items-center text-sm md:text-base">
                   <input type="checkbox" checked className="mr-2" readOnly />
-                  <span className="text-sm text-gray-700">
-                    Connect automatically
-                  </span>
+                  <span>Connect automatically</span>
                 </label>
               </div>
-              {/* Network Pages */}
               <div className="mt-8">
                 <h4 className="font-medium text-gray-800 mb-2">Advanced</h4>
                 <ul className="list-disc list-inside text-sm text-gray-600 space-y-1">
@@ -245,32 +321,32 @@ export default function SettingsApp() {
           </div>
         )}
 
+        {/* Power Section */}
         {activeSection === "power" && (
           <div>
-            <h3 className="text-xl font-semibold text-gray-800 mb-6">
+            <h3 className="hidden md:block text-xl font-semibold text-gray-800 mb-6">
               Power Settings
             </h3>
             <div className="space-y-6">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Battery Saver
-                </label>
-                <input type="checkbox" className="mr-2" />
-                <span className="text-sm text-gray-700">
+              <div className="flex items-center">
+                <input type="checkbox" className="mr-2" id="batterySaver" />
+                <label
+                  htmlFor="batterySaver"
+                  className="text-sm md:text-base text-gray-700"
+                >
                   Enable battery saver
-                </span>
+                </label>
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Sleep After
                 </label>
-                <select className="w-full p-2 border border-gray-300 rounded-lg">
+                <select className="w-full p-2 border border-gray-300 rounded-lg text-sm md:text-base">
                   <option>15 minutes</option>
                   <option>30 minutes</option>
                   <option>Never</option>
                 </select>
               </div>
-              {/* Power Pages */}
               <div className="mt-8">
                 <h4 className="font-medium text-gray-800 mb-2">Advanced</h4>
                 <ul className="list-disc list-inside text-sm text-gray-600 space-y-1">
@@ -283,9 +359,10 @@ export default function SettingsApp() {
           </div>
         )}
 
+        {/* Accounts Section */}
         {activeSection === "accounts" && (
           <div>
-            <h3 className="text-xl font-semibold text-gray-800 mb-6">
+            <h3 className="hidden md:block text-xl font-semibold text-gray-800 mb-6">
               Accounts Settings
             </h3>
             <div className="space-y-6">
@@ -296,7 +373,7 @@ export default function SettingsApp() {
                 <input
                   type="text"
                   value="User"
-                  className="w-full p-2 border border-gray-300 rounded-lg"
+                  className="w-full p-2 border border-gray-300 rounded-lg text-sm md:text-base"
                   readOnly
                 />
               </div>
@@ -307,11 +384,10 @@ export default function SettingsApp() {
                 <input
                   type="email"
                   value="user@example.com"
-                  className="w-full p-2 border border-gray-300 rounded-lg"
+                  className="w-full p-2 border border-gray-300 rounded-lg text-sm md:text-base"
                   readOnly
                 />
               </div>
-              {/* Accounts Pages */}
               <div className="mt-8">
                 <h4 className="font-medium text-gray-800 mb-2">Advanced</h4>
                 <ul className="list-disc list-inside text-sm text-gray-600 space-y-1">
@@ -324,38 +400,40 @@ export default function SettingsApp() {
           </div>
         )}
 
+        {/* Privacy Section */}
         {activeSection === "privacy" && (
           <div>
-            <h3 className="text-xl font-semibold text-gray-800 mb-6">
+            <h3 className="hidden md:block text-xl font-semibold text-gray-800 mb-6">
               Privacy Settings
             </h3>
             <div className="space-y-6">
-              <div>
-                <label className="flex items-center">
-                  <input
-                    type="checkbox"
-                    checked={settings.notifications}
-                    onChange={(e) =>
-                      updateSetting("notifications", e.target.checked)
-                    }
-                    className="mr-2"
-                  />
-                  <span className="text-sm text-gray-700">
-                    Allow notifications
-                  </span>
+              <div className="flex items-center">
+                <input
+                  type="checkbox"
+                  checked={settings.notifications}
+                  onChange={(e) =>
+                    updateSetting("notifications", e.target.checked)
+                  }
+                  className="mr-2"
+                  id="notifications"
+                />
+                <label
+                  htmlFor="notifications"
+                  className="text-sm md:text-base text-gray-700"
+                >
+                  Allow notifications
                 </label>
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   App Permissions
                 </label>
-                <select className="w-full p-2 border border-gray-300 rounded-lg">
+                <select className="w-full p-2 border border-gray-300 rounded-lg text-sm md:text-base">
                   <option>Standard</option>
                   <option>Restricted</option>
                   <option>Custom</option>
                 </select>
               </div>
-              {/* Privacy Pages */}
               <div className="mt-8">
                 <h4 className="font-medium text-gray-800 mb-2">Advanced</h4>
                 <ul className="list-disc list-inside text-sm text-gray-600 space-y-1">
@@ -368,9 +446,10 @@ export default function SettingsApp() {
           </div>
         )}
 
+        {/* Personalization Section */}
         {activeSection === "personalization" && (
           <div>
-            <h3 className="text-xl font-semibold text-gray-800 mb-6">
+            <h3 className="hidden md:block text-xl font-semibold text-gray-800 mb-6">
               Personalization
             </h3>
             <div className="space-y-6">
@@ -378,12 +457,12 @@ export default function SettingsApp() {
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Theme
                 </label>
-                <div className="grid grid-cols-3 gap-4">
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
                   {["light", "dark", "auto"].map((theme) => (
                     <button
                       key={theme}
                       onClick={() => updateSetting("theme", theme)}
-                      className={`p-4 border-2 rounded-lg text-center capitalize transition-colors ${
+                      className={`p-3 border-2 rounded-lg text-center capitalize transition-colors text-sm ${
                         settings.theme === theme
                           ? "border-blue-500 bg-blue-50"
                           : "border-gray-200 hover:border-gray-300"
@@ -398,7 +477,7 @@ export default function SettingsApp() {
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Wallpaper
                 </label>
-                <div className="grid grid-cols-4 gap-4">
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
                   {wallpaperImages.map((img, idx) => (
                     <button
                       key={img}
@@ -423,9 +502,10 @@ export default function SettingsApp() {
           </div>
         )}
 
+        {/* System Section */}
         {activeSection === "system" && (
           <div>
-            <h3 className="text-xl font-semibold text-gray-800 mb-6">
+            <h3 className="hidden md:block text-xl font-semibold text-gray-800 mb-6">
               System Information
             </h3>
             <div className="space-y-6">
@@ -495,22 +575,23 @@ export default function SettingsApp() {
                   </div>
                 </div>
               </div>
-              <div>
-                <label className="flex items-center">
-                  <input
-                    type="checkbox"
-                    checked={settings.autoUpdate}
-                    onChange={(e) =>
-                      updateSetting("autoUpdate", e.target.checked)
-                    }
-                    className="mr-2"
-                  />
-                  <span className="text-sm text-gray-700">
-                    Automatically install updates
-                  </span>
+              <div className="flex items-center">
+                <input
+                  type="checkbox"
+                  checked={settings.autoUpdate}
+                  onChange={(e) =>
+                    updateSetting("autoUpdate", e.target.checked)
+                  }
+                  className="mr-2"
+                  id="autoUpdate"
+                />
+                <label
+                  htmlFor="autoUpdate"
+                  className="text-sm md:text-base text-gray-700"
+                >
+                  Automatically install updates
                 </label>
               </div>
-              {/* System Pages */}
               <div className="mt-8">
                 <h4 className="font-medium text-gray-800 mb-2">Advanced</h4>
                 <ul className="list-disc list-inside text-sm text-gray-600 space-y-1">

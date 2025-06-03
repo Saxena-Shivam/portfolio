@@ -146,7 +146,7 @@ function AllAppsMobile({ onOpenApp }) {
 function DesktopContent({ currentTime, onShutdown, onLock }) {
   const [mobileApp, setMobileApp] = useState(null);
   const { openWindow, windows, closeWindow } = useWindows();
-
+  // const [showAllApps, setShowAllApps] = useState(false);
   // Detect mobile
   const [isMobile, setIsMobile] = useState(false);
   useEffect(() => {
