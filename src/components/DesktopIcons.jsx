@@ -66,7 +66,7 @@ export default function DesktopIcons() {
   // Responsive: grid for mobile/tablet, absolute for desktop
   return (
     <>
-      {/* Desktop: absolute icons */}
+      {/* Desktop: absolute icons (from right) */}
       <div
         className="absolute inset-0 hidden sm:block"
         onContextMenu={(e) => handleRightClick(e)}
@@ -76,7 +76,7 @@ export default function DesktopIcons() {
             key={item.id}
             className="absolute flex flex-col items-center cursor-pointer group select-none"
             style={{
-              left: item.position.x - 32,
+              right: item.position.x, // <-- position from right
               top: item.position.y,
               width: 80,
               zIndex: 10,
@@ -87,7 +87,7 @@ export default function DesktopIcons() {
             onDragEnd={(e) => {
               const rect = e.currentTarget.getBoundingClientRect();
               moveItem(item.id, {
-                x: e.clientX - rect.width / 2,
+                x: window.innerWidth - e.clientX - rect.width / 2,
                 y: e.clientY - rect.height / 2,
               });
             }}

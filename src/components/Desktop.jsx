@@ -5,7 +5,7 @@ import TopBar from "./TopBar";
 import DesktopIcons from "./DesktopIcons";
 import WindowManager from "./WindowManager";
 import { WindowProvider, useWindows } from "../contexts/WindowContext";
-import { DesktopProvider, useDesktop } from "../contexts/DesktopContext";
+import { DesktopProvider } from "../contexts/DesktopContext";
 import CodeEditorApp from "./apps/CodeEditorApp";
 import SpotifyApp from "./apps/SpotifyApp";
 import SettingsApp from "./apps/SettingsApp";
@@ -22,7 +22,9 @@ import AboutApp from "./apps/AboutApp";
 import ChromeApp from "./apps/ChromeApp";
 import Sidebar from "./Sidebar";
 import DesktopBackground from "./DesktopBackground";
-const allApps = [
+import AllAppsModal from "./AllAppsModal";
+
+export const allApps = [
   {
     id: "chrome",
     name: "Google Chrome",
@@ -116,7 +118,7 @@ function AllAppsMobile({ onOpenApp }) {
         <div
           className="grid grid-cols-3 gap-4"
           style={{
-            minHeight: "calc(100vh - 80px)", // ensure grid fills most of the screen
+            minHeight: "calc(100vh - 80px)",
             maxHeight: "calc(100vh - 80px)",
             alignContent: "center",
           }}
@@ -143,12 +145,13 @@ function AllAppsMobile({ onOpenApp }) {
     </div>
   );
 }
+
 function DesktopContent({ currentTime, onShutdown, onLock }) {
   const [mobileApp, setMobileApp] = useState(null);
-  const { openWindow, windows, closeWindow } = useWindows();
-  // const [showAllApps, setShowAllApps] = useState(false);
-  // Detect mobile
+  const { openWindow, windows } = useWindows();
+  const [showAllApps, setShowAllApps] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
+
   useEffect(() => {
     const check = () => setIsMobile(window.innerWidth < 640);
     check();
@@ -170,7 +173,6 @@ function DesktopContent({ currentTime, onShutdown, onLock }) {
   return (
     <div className="h-screen w-screen overflow-hidden relative select-none pb-0">
       {/* Desktop Background */}
-      {/* You can keep your background here if you want */}
       <DesktopBackground />
 
       {/* Top Bar */}
@@ -182,10 +184,19 @@ function DesktopContent({ currentTime, onShutdown, onLock }) {
 
       {/* Desktop/Tablet: Sidebar and Desktop Icons */}
       <div className="hidden sm:block">
-        <Sidebar onShowAllApps={() => {}} />
+        <Sidebar onShowAllApps={() => setShowAllApps(true)} />
         <DesktopIcons />
       </div>
-
+      {/* Show modal when needed */}
+      {showAllApps && !isMobile && (
+        <AllAppsModal
+          onOpenApp={(app) => {
+            openWindow(app.id, app.name, app.component);
+            setShowAllApps(false);
+          }}
+          onClose={() => setShowAllApps(false)}
+        />
+      )}
       {/* Mobile: Show All Apps grid if no app is open */}
       {isMobile && !mobileApp && (
         <AllAppsMobile onOpenApp={handleOpenAppMobile} />

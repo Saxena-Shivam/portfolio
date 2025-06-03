@@ -10,35 +10,35 @@ export function DesktopProvider({ children }) {
       id: "chrome",
       name: "Google Chrome",
       type: "app",
-      position: { x: 1200, y: 100 },
+      position: { x: 10, y: 100 },
       icon: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/chrome/chrome-original.svg",
     },
     {
       id: "vscode",
       name: "Visual Studio Code",
       type: "app",
-      position: { x: 1200, y: 200 },
+      position: { x: 10, y: 200 },
       icon: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/vscode/vscode-original.svg",
     },
     {
       id: "github",
       name: "GitHub Desktop",
       type: "app",
-      position: { x: 1200, y: 300 },
+      position: { x: 10, y: 300 },
       icon: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/github/github-original.svg",
     },
     {
       id: "spotify",
       name: "Spotify",
       type: "app",
-      position: { x: 1200, y: 400 },
+      position: { x: 10, y: 400 },
       icon: "https://upload.wikimedia.org/wikipedia/commons/8/84/Spotify_icon.svg",
     },
     {
       id: "documents",
       name: "Documents",
       type: "folder",
-      position: { x: 1200, y: 500 },
+      position: { x: 10, y: 500 },
       icon: "📁",
       children: [],
     },
@@ -48,6 +48,7 @@ export function DesktopProvider({ children }) {
   const [wallpaper, setWallpaper] = useState(
     `/image/wallpaper${Math.floor(Math.random() * 10) + 1}.avif`
   );
+
   const createFolder = (name, position) => {
     const newFolder = {
       id: `folder-${Date.now()}`,
@@ -97,8 +98,8 @@ export function DesktopProvider({ children }) {
         deleteItem,
         renameItem,
         moveItem,
-        wallpaper, // Provide wallpaper
-        setWallpaper, // Provide setWallpaper
+        wallpaper,
+        setWallpaper,
       }}
     >
       {children}
