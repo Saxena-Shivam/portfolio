@@ -18,6 +18,11 @@
     width: 100vw;
     height: 100vh;
   }
+  html,
+  body {
+    height: 100%;
+    min-height: 100%;
+  }
 }
 
 @layer utilities {
