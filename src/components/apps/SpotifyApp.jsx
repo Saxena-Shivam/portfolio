@@ -11,8 +11,6 @@ import {
   Repeat,
   Heart,
   Search,
-  Home,
-  Library,
 } from "lucide-react";
 
 export default function SpotifyApp() {
@@ -361,26 +359,13 @@ export default function SpotifyApp() {
         </div>
       </div>
 
-      {/* Mobile Bottom Navigation */}
-      <div className="md:hidden fixed bottom-0 left-0 right-0 bg-gray-900 border-t border-gray-800 flex items-center justify-around p-3 z-10">
-        <button className="p-3 text-white">
-          <Home className="w-6 h-6" />
-        </button>
-        <button className="p-3 text-gray-400">
-          <Search className="w-6 h-6" />
-        </button>
-        <button className="p-3 text-gray-400">
-          <Library className="w-6 h-6" />
-        </button>
-      </div>
-
       {/* Hidden Audio Element */}
       <audio ref={audioRef} src={currentSong.preview_url} />
 
       {/* Mobile Mini Player - Shows when collapsed */}
       {!isExpanded && (
         <div
-          className="md:hidden fixed bottom-16 left-0 right-0 bg-gray-800 p-3 border-t border-gray-700 flex items-center z-10"
+          className="md:hidden fixed bottom-0 left-0 right-0 bg-gray-800 p-3 border-t border-gray-700 flex items-center z-10"
           onClick={toggleExpand}
         >
           <img
