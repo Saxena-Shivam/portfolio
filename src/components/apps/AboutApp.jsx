@@ -35,6 +35,9 @@ import {
   SiHtml5,
   SiCss3,
   SiFirebase,
+  SiLeetcode,
+  SiCodechef,
+  SiCodeforces,
 } from "react-icons/si";
 
 export default function PortfolioLayout() {
@@ -203,33 +206,45 @@ export default function PortfolioLayout() {
                   </section>
 
                   <section className="bg-white p-6 rounded-xl shadow-lg border border-gray-100 hover:shadow-xl transition-shadow duration-300">
-                    <h2 className="text-xl font-semibold text-gray-800 mb-3">
+                    <h2 className="text-xl font-semibold text-gray-800 mb-3 text-center">
                       Competitive Programming
                     </h2>
                     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-                      <div className="bg-gradient-to-r from-blue-50 to-indigo-50 p-4 rounded-lg border border-blue-100 hover:shadow-lg transition-shadow shadow-sm">
-                        <h3 className="font-semibold text-gray-800">
+                      <div className="bg-gradient-to-br from-blue-100 to-indigo-100 p-4 rounded-lg border border-blue-200 shadow flex flex-col items-center">
+                        <SiLeetcode className="w-10 h-10 text-yellow-500 mb-2" />
+                        {/* <h3 className="font-semibold text-gray-800 text-lg">
                           LeetCode
-                        </h3>
-                        <p className="text-blue-600 font-medium">
-                          Max Rating: 1630
-                        </p>
+                        </h3> */}
+                        <span className="text-2xl font-bold text-blue-600">
+                          1630
+                        </span>
+                        <span className="text-xs text-blue-700 font-medium">
+                          Max Rating
+                        </span>
                       </div>
-                      <div className="bg-gradient-to-r from-green-50 to-teal-50 p-4 rounded-lg border border-green-100 hover:shadow-lg transition-shadow shadow-sm">
-                        <h3 className="font-semibold text-gray-800">
+                      <div className="bg-gradient-to-br from-green-100 to-teal-100 p-4 rounded-lg border border-green-200 shadow flex flex-col items-center">
+                        <SiCodechef className="w-10 h-10 text-orange-500 mb-2" />
+                        {/* <h3 className="font-semibold text-gray-800 text-lg">
                           CodeChef
-                        </h3>
-                        <p className="text-green-600 font-medium">
-                          Max Rating: 1493
-                        </p>
+                        </h3> */}
+                        <span className="text-2xl font-bold text-green-600">
+                          1493
+                        </span>
+                        <span className="text-xs text-green-700 font-medium">
+                          Max Rating
+                        </span>
                       </div>
-                      <div className="bg-gradient-to-r from-purple-50 to-violet-50 p-4 rounded-lg border border-purple-100 hover:shadow-lg transition-shadow shadow-sm">
-                        <h3 className="font-semibold text-gray-800">
+                      <div className="bg-gradient-to-br from-purple-100 to-violet-100 p-4 rounded-lg border border-purple-200 shadow flex flex-col items-center">
+                        <SiCodeforces className="w-10 h-10 text-purple-600 mb-2" />
+                        {/* <h3 className="font-semibold text-gray-800 text-lg">
                           CodeForces
-                        </h3>
-                        <p className="text-purple-600 font-medium">
-                          Max Rating: 1112
-                        </p>
+                        </h3> */}
+                        <span className="text-2xl font-bold text-purple-600">
+                          1112
+                        </span>
+                        <span className="text-xs text-purple-700 font-medium">
+                          Max Rating
+                        </span>
                       </div>
                     </div>
                   </section>
@@ -725,14 +740,14 @@ export default function PortfolioLayout() {
 
         {/* Resume Section */}
         {activeSection === "resume" && (
-          <div className="p-4 md:p-6 max-w-4xl mx-auto">
+          <div className="p-4 md:p-6 max-w-6xl mx-auto">
             <h1 className="text-2xl font-bold text-gray-800 mb-6">Resume</h1>
 
             <div className="bg-white rounded-lg shadow-lg p-4 md:p-8 border border-gray-100">
-              <div className="bg-gray-50 border border-gray-200 rounded-lg w-full min-h-[50vh]">
+              <div className="bg-gray-50 border border-gray-200 rounded-lg w-full min-h-[60vh] md:min-h-[80vh]">
                 <iframe
                   src="/Shivam_Inter_IIT14_0 (1).pdf"
-                  className="w-full h-full min-h-[50vh]"
+                  className="w-full h-[60vh] md:h-[80vh] rounded-lg"
                   frameBorder="0"
                 >
                   <p className="p-4 text-center text-gray-600">
@@ -774,7 +789,6 @@ export default function PortfolioLayout() {
             </div>
           </div>
         )}
-
         {/* Achievements Section */}
         {activeSection === "achievements" && (
           <div className="p-4 md:p-6 max-w-4xl mx-auto">
@@ -782,7 +796,7 @@ export default function PortfolioLayout() {
               Achievements & Activities
             </h1>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-1 gap-6">
               <div className="bg-white rounded-xl shadow-lg p-6 hover:shadow-xl transition-shadow duration-300 border border-gray-100">
                 <h2 className="text-xl font-semibold text-gray-800 mb-4 flex items-center">
                   <FileText className="w-5 h-5 mr-2 text-indigo-600" />
@@ -847,7 +861,7 @@ export default function PortfolioLayout() {
                 </ul>
               </div>
 
-              <div className="bg-white rounded-xl shadow-lg p-6 hover:shadow-xl transition-shadow duration-300 border border-gray-100">
+              {/* <div className="bg-white rounded-xl shadow-lg p-6 hover:shadow-xl transition-shadow duration-300 border border-gray-100">
                 <h2 className="text-xl font-semibold text-gray-800 mb-4 flex items-center">
                   <User className="w-5 h-5 mr-2 text-indigo-600" />
                   Positions of Responsibility
@@ -911,7 +925,7 @@ export default function PortfolioLayout() {
                     </span>
                   </li>
                 </ul>
-              </div>
+              </div> */}
             </div>
           </div>
         )}

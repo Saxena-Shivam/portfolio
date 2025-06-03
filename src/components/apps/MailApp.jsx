@@ -18,24 +18,29 @@ export default function ContactApp() {
     subject: "",
     message: "",
   });
+  const [sent, setSent] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await fetch("http://localhost:5000/api/send-mail", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
-      });
+      const res = await fetch(
+        "https://portfolio-1-ayl7.onrender.com/api/send-mail",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(formData),
+        }
+      );
       if (res.ok) {
-        alert("Message sent! Thank you for reaching out.");
+        setSent(true);
         setFormData({ name: "", email: "", subject: "", message: "" });
+        setTimeout(() => setSent(false), 3000);
       } else {
         console.error("Failed to send message:", res.statusText);
-        alert("Failed to send message.");
+        setSent(false);
       }
     } catch (err) {
-      alert("Error sending message.", err);
+      setSent(false);
     }
   };
 
@@ -263,6 +268,11 @@ export default function ContactApp() {
                 <span>Send Message</span>
               </button>
             </form>
+            {sent && (
+              <div className="mt-4 text-green-600 font-semibold">
+                Message sent successfully!
+              </div>
+            )}
           </div>
         </div>
       </div>
