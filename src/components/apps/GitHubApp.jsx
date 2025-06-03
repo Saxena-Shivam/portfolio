@@ -68,7 +68,7 @@ export default function GitHubApp() {
       if (repositories.length === 0) return;
 
       try {
-        const commitPromises = repositories.slice(0, 4).map((repo) =>
+        const commitPromises = repositories.slice(0, 6).map((repo) =>
           fetch(`https://api.github.com/repos/${username}/${repo.name}/commits`)
             .then((res) => res.json())
             .then((commits) => ({
@@ -130,7 +130,7 @@ export default function GitHubApp() {
       <div className="min-h-screen bg-white flex items-center justify-center">
         <div className="bg-red-50 border border-red-200 rounded-lg p-6 max-w-md mx-4">
           <h3 className="text-lg font-medium text-red-800 mb-2">
-            Error Loading Data
+            Turn On Your Internet
           </h3>
           <p className="text-red-700 mb-4">{error}</p>
           <button

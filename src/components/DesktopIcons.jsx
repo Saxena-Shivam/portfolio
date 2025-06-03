@@ -5,7 +5,9 @@ import { useDesktop } from "../contexts/DesktopContext";
 import { useWindows } from "../contexts/WindowContext";
 import SpotifyApp from "./apps/SpotifyApp";
 import CodeEditorApp from "./apps/CodeEditorApp";
-
+import GitHubApp from "./apps/GitHubApp";
+import ChromeApp from "./apps/ChromeApp";
+import FileManagerApp from "./apps/FileManagerApp";
 export default function DesktopIcons() {
   const { desktopItems, createFolder, deleteItem, renameItem, moveItem } =
     useDesktop();
@@ -32,26 +34,25 @@ export default function DesktopIcons() {
     if (item.type === "app") {
       switch (item.id) {
         case "chrome":
-          window.open("https://google.com", "_blank");
+          openWindow("crome", "crome", <ChromeApp />);
           break;
         case "vscode":
           openWindow("code", "VS Code", <CodeEditorApp />);
           break;
         case "github":
-          window.open("https://github.com/Saxena-Shivam", "_blank");
+          openWindow("github", "github", <GitHubApp />);
           break;
         case "spotify":
           openWindow("spotify", "Spotify", <SpotifyApp />);
           break;
+        // case "documents":
+        //   openWindow("files", "Documents", <FileManagerApp />);
+        //   break;
         default:
           break;
       }
     } else if (item.type === "folder") {
-      openWindow(
-        "files",
-        "Files",
-        <div className="p-4">Folder: {item.name}</div>
-      );
+      openWindow("files", "Files", <FileManagerApp />);
     }
   };
 

@@ -19,7 +19,6 @@ import {
   X,
 } from "lucide-react";
 
-// Tech icons import
 import {
   SiJavascript,
   SiTypescript,

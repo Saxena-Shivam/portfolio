@@ -1,9 +1,9 @@
 "use client";
-
-import { useState, useRef, useEffect } from "react";
+import { useLayoutEffect, useState, useRef, useEffect } from "react";
 import { useWindows } from "../contexts/WindowContext";
 import useIsMobile from "../hooks/useIsMobile.jsx";
-export default function Window({ window }) {
+
+export default function Window({ window: win }) {
   const {
     closeWindow,
     minimizeWindow,
@@ -19,7 +19,7 @@ export default function Window({ window }) {
 
   // Responsive: detect mobile/tablet
   const isMobile = useIsMobile();
-  console.log("isMobile:", isMobile);
+
   const handleMouseDown = (e) => {
     if (
       e.target === e.currentTarget ||
@@ -27,16 +27,16 @@ export default function Window({ window }) {
     ) {
       setIsDragging(true);
       setDragOffset({
-        x: e.clientX - window.position.x,
-        y: e.clientY - window.position.y,
+        x: e.clientX - win.position.x,
+        y: e.clientY - win.position.y,
       });
-      focusWindow(window.id);
+      focusWindow(win.id);
     }
   };
 
   const handleMouseMove = (e) => {
-    if (isDragging && !window.isMaximized && !isMobile) {
-      updateWindowPosition(window.id, {
+    if (isDragging && !win.isMaximized && !isMobile) {
+      updateWindowPosition(win.id, {
         x: e.clientX - dragOffset.x,
         y: e.clientY - dragOffset.y,
       });
@@ -59,13 +59,45 @@ export default function Window({ window }) {
     }
   }, [isDragging, isResizing, dragOffset]);
 
-  if (window.isMinimized) {
+  if (win.isMinimized) {
     return null;
   }
 
+  useLayoutEffect(() => {
+    function clampWindowToViewport() {
+      const vw = window.innerWidth;
+      const vh = window.innerHeight;
+      let width = win.size.width;
+      let height = win.size.height;
+      let x = win.position.x;
+      let y = win.position.y;
+
+      // Clamp width/height
+      width = Math.min(width, vw);
+      height = Math.min(height, vh);
+
+      // Clamp position
+      x = Math.max(0, Math.min(x, vw - width));
+      y = Math.max(0, Math.min(y, vh - height));
+
+      // Only update if needed
+      if (width !== win.size.width || height !== win.size.height) {
+        updateWindowSize(win.id, { width, height });
+      }
+      if (x !== win.position.x || y !== win.position.y) {
+        updateWindowPosition(win.id, { x, y });
+      }
+    }
+
+    clampWindowToViewport();
+    window.addEventListener("resize", clampWindowToViewport);
+    return () => window.removeEventListener("resize", clampWindowToViewport);
+    // eslint-disable-next-line
+  }, [win.id, win.size.width, win.size.height, win.position.x, win.position.y]);
+
   // Responsive window style
   let windowStyle;
-  if (window.isMaximized || isMobile) {
+  if (win.isMaximized || isMobile) {
     windowStyle = {
       position: "fixed",
       top: 0,
@@ -74,7 +106,7 @@ export default function Window({ window }) {
       bottom: 0,
       width: "100vw",
       height: "100vh",
-      zIndex: window.zIndex,
+      zIndex: win.zIndex,
       maxWidth: "100vw",
       maxHeight: "100vh",
       minWidth: "0",
@@ -84,17 +116,18 @@ export default function Window({ window }) {
   } else {
     windowStyle = {
       position: "fixed",
-      left: window.position.x,
-      top: window.position.y,
-      width: window.size.width,
-      height: window.size.height,
-      zIndex: window.zIndex,
+      left: win.position.x,
+      top: win.position.y,
+      width: win.size.width,
+      height: win.size.height,
+      zIndex: win.zIndex,
       minWidth: 220,
       minHeight: 120,
       maxWidth: "100vw",
       maxHeight: "100vh",
     };
   }
+
   return (
     <div
       ref={windowRef}
@@ -102,7 +135,7 @@ export default function Window({ window }) {
         isMobile ? "rounded-none" : "rounded-lg"
       }`}
       style={windowStyle}
-      onClick={() => focusWindow(window.id)}
+      onClick={() => focusWindow(win.id)}
     >
       {/* Window Header */}
       <div
@@ -116,24 +149,24 @@ export default function Window({ window }) {
         <div className="flex items-center space-x-2">
           <div className="flex space-x-2">
             <button
-              onClick={() => closeWindow(window.id)}
+              onClick={() => closeWindow(win.id)}
               className="w-3 h-3 bg-red-500 rounded-full hover:bg-red-600 transition-colors"
               aria-label="Close"
             />
             <button
-              onClick={() => minimizeWindow(window.id)}
+              onClick={() => minimizeWindow(win.id)}
               className="w-3 h-3 bg-yellow-500 rounded-full hover:bg-yellow-600 transition-colors"
               aria-label="Minimize"
             />
             <button
-              onClick={() => maximizeWindow(window.id)}
+              onClick={() => maximizeWindow(win.id)}
               className="w-3 h-3 bg-green-500 rounded-full hover:bg-green-600 transition-colors"
               aria-label="Maximize"
             />
           </div>
         </div>
         <div className="text-xs sm:text-sm font-medium text-gray-700 flex-1 text-center truncate">
-          {window.title}
+          {win.title}
         </div>
         <div className="w-12 sm:w-16" /> {/* Spacer for centering */}
       </div>
@@ -145,7 +178,7 @@ export default function Window({ window }) {
           padding: isMobile ? 4 : 0,
         }}
       >
-        {window.component}
+        {win.component}
       </div>
     </div>
   );
