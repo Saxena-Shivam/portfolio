@@ -19,12 +19,24 @@ export default function ContactApp() {
     message: "",
   });
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Form submitted:", formData);
-    // Reset form
-    setFormData({ name: "", email: "", subject: "", message: "" });
-    alert("Message sent! Thank you for reaching out.");
+    try {
+      const res = await fetch("http://localhost:5000/api/send-mail", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      });
+      if (res.ok) {
+        alert("Message sent! Thank you for reaching out.");
+        setFormData({ name: "", email: "", subject: "", message: "" });
+      } else {
+        console.error("Failed to send message:", res.statusText);
+        alert("Failed to send message.");
+      }
+    } catch (err) {
+      alert("Error sending message.", err);
+    }
   };
 
   const handleChange = (e) => {
