@@ -459,29 +459,34 @@ export default function TerminalApp() {
 
   return (
     <div
-      className="h-full bg-black text-green-400 font-mono text-sm p-4 overflow-hidden flex flex-col cursor-text"
+      className="h-full bg-black text-green-400 font-mono text-xs sm:text-sm p-1 sm:p-2 overflow-hidden flex flex-col cursor-text"
       onClick={() => inputRef.current?.focus()}
     >
       <div
         ref={terminalRef}
-        className="flex-1 overflow-y-auto mb-2 terminal-scroll"
+        className="flex-1 overflow-y-auto pr-1 terminal-scroll"
       >
         {history.map((line, index) => (
-          <div key={index} className="whitespace-pre-wrap leading-relaxed">
+          <div
+            key={index}
+            className="whitespace-pre-wrap leading-tight sm:leading-relaxed break-words"
+          >
             {line}
           </div>
         ))}
       </div>
 
-      <form onSubmit={handleSubmit} className="flex items-center">
-        <span className="text-blue-400 mr-2">{currentDirectory} $</span>
+      <form onSubmit={handleSubmit} className="flex items-center w-full mt-0.5">
+        <span className="text-blue-400 mr-1 sm:mr-2 flex-shrink-0">
+          {currentDirectory} $
+        </span>
         <input
           ref={inputRef}
           type="text"
           value={input}
           onChange={(e) => setInput(e.target.value)}
           onKeyDown={handleKeyDown}
-          className="flex-1 bg-transparent outline-none text-green-400 caret-green-400"
+          className="flex-1 bg-transparent outline-none text-green-400 caret-green-400 w-full"
           autoComplete="off"
           spellCheck={false}
         />
