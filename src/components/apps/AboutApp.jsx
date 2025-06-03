@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   User,
   GraduationCap,
@@ -15,6 +15,8 @@ import {
   Phone,
   Calendar,
   ExternalLink,
+  Menu,
+  X,
 } from "lucide-react";
 
 // Tech icons import
@@ -38,11 +40,46 @@ import {
 
 export default function PortfolioLayout() {
   const [activeSection, setActiveSection] = useState("about");
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768);
+      if (window.innerWidth >= 768) {
+        setIsSidebarOpen(false);
+      }
+    };
+
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 flex flex-col md:flex-row">
+    <div className="min-h-screen bg-white flex flex-col md:flex-row">
+      {/* Mobile Header */}
+      <div className="md:hidden bg-gradient-to-r from-indigo-800 to-indigo-900 text-white p-4 flex items-center justify-between sticky top-0 z-20 shadow-lg">
+        <button
+          onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+          className="p-1 rounded-md hover:bg-indigo-700 transition-colors"
+        >
+          {isSidebarOpen ? (
+            <X className="w-6 h-6 text-white" />
+          ) : (
+            <Menu className="w-6 h-6 text-white" />
+          )}
+        </button>
+        <h1 className="text-xl font-bold">Shivam Saxena</h1>
+        <div className="w-6"></div>
+      </div>
+
       {/* Sidebar */}
-      <div className="w-full md:w-64 bg-gradient-to-b from-indigo-800 to-indigo-900 text-white flex flex-col">
+      <div
+        className={`fixed inset-0 z-10 bg-gradient-to-b from-indigo-800 to-indigo-900 text-white transform ${
+          isSidebarOpen ? "translate-x-0" : "-translate-x-full"
+        } md:relative md:translate-x-0 transition-transform duration-300 md:w-64 flex flex-col shadow-2xl`}
+      >
         <div className="p-4 border-b border-indigo-700">
           <h1 className="text-xl font-bold">Shivam Saxena</h1>
           <p className="text-indigo-200 text-sm">
@@ -50,7 +87,7 @@ export default function PortfolioLayout() {
           </p>
         </div>
 
-        <nav className="flex-1 py-4">
+        <nav className="flex-1 py-4 overflow-y-auto">
           {[
             { id: "about", icon: User, label: "About Shivam" },
             { id: "education", icon: GraduationCap, label: "Education" },
@@ -66,7 +103,10 @@ export default function PortfolioLayout() {
                   ? "bg-indigo-600 text-white shadow-inner"
                   : "text-indigo-100 hover:bg-indigo-700/70"
               }`}
-              onClick={() => setActiveSection(item.id)}
+              onClick={() => {
+                setActiveSection(item.id);
+                if (isMobile) setIsSidebarOpen(false);
+              }}
             >
               <item.icon className="w-5 h-5 mr-3" />
               <span>{item.label}</span>
@@ -80,14 +120,14 @@ export default function PortfolioLayout() {
       </div>
 
       {/* Main Content */}
-      <div className="flex-1 overflow-y-auto">
+      <div className="flex-1 overflow-y-auto bg-white">
         {/* About Section */}
         {activeSection === "about" && (
-          <div className="p-6 max-w-4xl mx-auto">
-            <div className="flex flex-col md:flex-row gap-8">
+          <div className="p-4 md:p-6 max-w-4xl mx-auto">
+            <div className="flex flex-col md:flex-row gap-6 md:gap-8">
               <div className="md:w-1/3">
                 <div className="text-center">
-                  <div className="w-32 h-32 mx-auto mb-4 flex items-center justify-center overflow-hidden rounded-full border-4 border-indigo-200 shadow-lg">
+                  <div className="w-32 h-32 mx-auto mb-4 flex items-center justify-center overflow-hidden rounded-full border-4 border-indigo-200 shadow-xl">
                     <div className="bg-gradient-to-br from-indigo-400 to-indigo-600 w-full h-full flex items-center justify-center text-white text-4xl font-bold">
                       SS
                     </div>
@@ -103,20 +143,20 @@ export default function PortfolioLayout() {
                     <a
                       href="https://github.com/Saxena-Shivam"
                       target="_blank"
-                      className="text-gray-600 hover:text-gray-900 transition-colors bg-gray-100 p-2 rounded-full hover:shadow-md"
+                      className="text-gray-600 hover:text-gray-900 transition-colors bg-gray-100 p-2 rounded-full shadow-sm hover:shadow-lg"
                     >
                       <Github className="w-5 h-5" />
                     </a>
                     <a
                       href="https://linkedin.com/in/shivam-saxena-aa8754289/"
                       target="_blank"
-                      className="text-gray-600 hover:text-blue-700 transition-colors bg-gray-100 p-2 rounded-full hover:shadow-md"
+                      className="text-gray-600 hover:text-blue-700 transition-colors bg-gray-100 p-2 rounded-full shadow-sm hover:shadow-lg"
                     >
                       <Linkedin className="w-5 h-5" />
                     </a>
                     <a
                       href="mailto:24ee01074@iitbbs.ac.in"
-                      className="text-gray-600 hover:text-red-600 transition-colors bg-gray-100 p-2 rounded-full hover:shadow-md"
+                      className="text-gray-600 hover:text-red-600 transition-colors bg-gray-100 p-2 rounded-full shadow-sm hover:shadow-lg"
                     >
                       <Mail className="w-5 h-5" />
                     </a>
@@ -126,7 +166,7 @@ export default function PortfolioLayout() {
 
               <div className="md:w-2/3">
                 <div className="space-y-6">
-                  <section className="bg-white p-6 rounded-xl shadow-md hover:shadow-lg transition-shadow duration-300">
+                  <section className="bg-white p-6 rounded-xl shadow-lg border border-gray-100 hover:shadow-xl transition-shadow duration-300">
                     <h2 className="text-xl font-semibold text-gray-800 mb-3">
                       About Me
                     </h2>
@@ -140,7 +180,7 @@ export default function PortfolioLayout() {
                     </p>
                   </section>
 
-                  <section className="bg-white p-6 rounded-xl shadow-md hover:shadow-lg transition-shadow duration-300">
+                  <section className="bg-white p-6 rounded-xl shadow-lg border border-gray-100 hover:shadow-xl transition-shadow duration-300">
                     <h2 className="text-xl font-semibold text-gray-800 mb-3">
                       Contact Information
                     </h2>
@@ -166,28 +206,34 @@ export default function PortfolioLayout() {
                     </div>
                   </section>
 
-                  <section className="bg-white p-6 rounded-xl shadow-md hover:shadow-lg transition-shadow duration-300">
+                  <section className="bg-white p-6 rounded-xl shadow-lg border border-gray-100 hover:shadow-xl transition-shadow duration-300">
                     <h2 className="text-xl font-semibold text-gray-800 mb-3">
                       Competitive Programming
                     </h2>
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                      <div className="bg-gradient-to-r from-blue-50 to-indigo-50 p-4 rounded-lg border border-blue-100 hover:shadow-md transition-shadow">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                      <div className="bg-gradient-to-r from-blue-50 to-indigo-50 p-4 rounded-lg border border-blue-100 hover:shadow-lg transition-shadow shadow-sm">
                         <h3 className="font-semibold text-gray-800">
                           LeetCode
                         </h3>
-                        <p className="text-blue-600">Max Rating: 1630</p>
+                        <p className="text-blue-600 font-medium">
+                          Max Rating: 1630
+                        </p>
                       </div>
-                      <div className="bg-gradient-to-r from-green-50 to-teal-50 p-4 rounded-lg border border-green-100 hover:shadow-md transition-shadow">
+                      <div className="bg-gradient-to-r from-green-50 to-teal-50 p-4 rounded-lg border border-green-100 hover:shadow-lg transition-shadow shadow-sm">
                         <h3 className="font-semibold text-gray-800">
                           CodeChef
                         </h3>
-                        <p className="text-green-600">Max Rating: 1493</p>
+                        <p className="text-green-600 font-medium">
+                          Max Rating: 1493
+                        </p>
                       </div>
-                      <div className="bg-gradient-to-r from-purple-50 to-violet-50 p-4 rounded-lg border border-purple-100 hover:shadow-md transition-shadow">
+                      <div className="bg-gradient-to-r from-purple-50 to-violet-50 p-4 rounded-lg border border-purple-100 hover:shadow-lg transition-shadow shadow-sm">
                         <h3 className="font-semibold text-gray-800">
                           CodeForces
                         </h3>
-                        <p className="text-purple-600">Max Rating: 1112</p>
+                        <p className="text-purple-600 font-medium">
+                          Max Rating: 1112
+                        </p>
                       </div>
                     </div>
                   </section>
@@ -199,11 +245,11 @@ export default function PortfolioLayout() {
 
         {/* Education Section */}
         {activeSection === "education" && (
-          <div className="p-6 max-w-4xl mx-auto">
+          <div className="p-4 md:p-6 max-w-4xl mx-auto">
             <h1 className="text-2xl font-bold text-gray-800 mb-6">Education</h1>
 
             <div className="space-y-6">
-              <div className="bg-white rounded-xl shadow-md p-6 border-l-4 border-indigo-500 hover:shadow-lg transition-all duration-300">
+              <div className="bg-white rounded-xl shadow-lg p-6 border-l-4 border-indigo-500 hover:shadow-xl transition-all duration-300 border border-gray-100">
                 <div className="flex justify-between items-start">
                   <div>
                     <h2 className="text-xl font-semibold text-gray-800">
@@ -216,13 +262,13 @@ export default function PortfolioLayout() {
                       2024 - 2028 • CGPA: 8.62
                     </p>
                   </div>
-                  <div className="bg-indigo-100 text-indigo-800 px-3 py-1 rounded-full text-sm font-medium">
+                  <div className="bg-indigo-100 text-indigo-800 px-3 py-1 rounded-full text-sm font-medium shadow-sm">
                     Current
                   </div>
                 </div>
               </div>
 
-              <div className="bg-white rounded-xl shadow-md p-6 border-l-4 border-green-500 hover:shadow-lg transition-all duration-300">
+              <div className="bg-white rounded-xl shadow-lg p-6 border-l-4 border-green-500 hover:shadow-xl transition-all duration-300 border border-gray-100">
                 <div className="flex justify-between items-start">
                   <div>
                     <h2 className="text-xl font-semibold text-gray-800">
@@ -233,13 +279,13 @@ export default function PortfolioLayout() {
                       2023 • Percentage: 89.2%
                     </p>
                   </div>
-                  <div className="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-medium">
+                  <div className="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-medium shadow-sm">
                     Completed
                   </div>
                 </div>
               </div>
 
-              <div className="bg-white rounded-xl shadow-md p-6 border-l-4 border-purple-500 hover:shadow-lg transition-all duration-300">
+              <div className="bg-white rounded-xl shadow-lg p-6 border-l-4 border-purple-500 hover:shadow-xl transition-all duration-300 border border-gray-100">
                 <div className="flex justify-between items-start">
                   <div>
                     <h2 className="text-xl font-semibold text-gray-800">
@@ -250,7 +296,7 @@ export default function PortfolioLayout() {
                       2021 • Percentage: 85.8%
                     </p>
                   </div>
-                  <div className="bg-purple-100 text-purple-800 px-3 py-1 rounded-full text-sm font-medium">
+                  <div className="bg-purple-100 text-purple-800 px-3 py-1 rounded-full text-sm font-medium shadow-sm">
                     Completed
                   </div>
                 </div>
@@ -261,13 +307,13 @@ export default function PortfolioLayout() {
 
         {/* Skills Section */}
         {activeSection === "skills" && (
-          <div className="p-6 max-w-4xl mx-auto">
+          <div className="p-4 md:p-6 max-w-4xl mx-auto">
             <h1 className="text-2xl font-bold text-gray-800 mb-6">
               Technical Skills
             </h1>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="bg-white rounded-xl shadow-md p-6 hover:shadow-lg transition-all duration-300">
+              <div className="bg-white rounded-xl shadow-lg p-6 hover:shadow-xl transition-all duration-300 border border-gray-100">
                 <h2 className="text-xl font-semibold text-gray-800 mb-4 flex items-center">
                   <Code2 className="w-5 h-5 mr-2 text-indigo-600" />
                   Programming Languages
@@ -304,7 +350,7 @@ export default function PortfolioLayout() {
                 </div>
               </div>
 
-              <div className="bg-white rounded-xl shadow-md p-6 hover:shadow-lg transition-all duration-300">
+              <div className="bg-white rounded-xl shadow-lg p-6 hover:shadow-xl transition-all duration-300 border border-gray-100">
                 <h2 className="text-xl font-semibold text-gray-800 mb-4 flex items-center">
                   <SiReact className="w-5 h-5 mr-2 text-blue-500" />
                   Web Development
@@ -351,7 +397,7 @@ export default function PortfolioLayout() {
                 </div>
               </div>
 
-              <div className="bg-white rounded-xl shadow-md p-6 hover:shadow-lg transition-all duration-300">
+              <div className="bg-white rounded-xl shadow-lg p-6 hover:shadow-xl transition-all duration-300 border border-gray-100">
                 <h2 className="text-xl font-semibold text-gray-800 mb-4 flex items-center">
                   <SiMongodb className="w-5 h-5 mr-2 text-green-500" />
                   Databases & Tools
@@ -386,7 +432,7 @@ export default function PortfolioLayout() {
                 </div>
               </div>
 
-              <div className="bg-white rounded-xl shadow-md p-6 hover:shadow-lg transition-all duration-300">
+              <div className="bg-white rounded-xl shadow-lg p-6 hover:shadow-xl transition-all duration-300 border border-gray-100">
                 <h2 className="text-xl font-semibold text-gray-800 mb-4 flex items-center">
                   <Code2 className="w-5 h-5 mr-2 text-indigo-600" />
                   Other Skills
@@ -426,11 +472,11 @@ export default function PortfolioLayout() {
 
         {/* Projects Section */}
         {activeSection === "projects" && (
-          <div className="p-6 max-w-4xl mx-auto">
+          <div className="p-4 md:p-6 max-w-4xl mx-auto">
             <h1 className="text-2xl font-bold text-gray-800 mb-6">Projects</h1>
 
             <div className="space-y-6">
-              <div className="bg-white rounded-xl shadow-md p-6 border-l-4 border-indigo-500 hover:shadow-lg transition-all duration-300">
+              <div className="bg-white rounded-xl shadow-lg p-6 border-l-4 border-indigo-500 hover:shadow-xl transition-all duration-300 border border-gray-100">
                 <div className="flex justify-between items-start">
                   <div>
                     <h2 className="text-xl font-semibold text-gray-800">
@@ -501,7 +547,7 @@ export default function PortfolioLayout() {
                 </div>
               </div>
 
-              <div className="bg-white rounded-xl shadow-md p-6 border-l-4 border-green-500 hover:shadow-lg transition-all duration-300">
+              <div className="bg-white rounded-xl shadow-lg p-6 border-l-4 border-green-500 hover:shadow-xl transition-all duration-300 border border-gray-100">
                 <div className="flex justify-between items-start">
                   <div>
                     <h2 className="text-xl font-semibold text-gray-800">
@@ -567,7 +613,7 @@ export default function PortfolioLayout() {
                 </div>
               </div>
 
-              <div className="bg-white rounded-xl shadow-md p-6 border-l-4 border-purple-500 hover:shadow-lg transition-all duration-300">
+              <div className="bg-white rounded-xl shadow-lg p-6 border-l-4 border-purple-500 hover:shadow-xl transition-all duration-300 border border-gray-100">
                 <div className="flex justify-between items-start">
                   <div>
                     <h2 className="text-xl font-semibold text-gray-800">
@@ -640,19 +686,14 @@ export default function PortfolioLayout() {
 
         {/* Resume Section */}
         {activeSection === "resume" && (
-          <div className="p-6 max-w-4xl mx-auto">
+          <div className="p-4 md:p-6 max-w-4xl mx-auto">
             <h1 className="text-2xl font-bold text-gray-800 mb-6">Resume</h1>
 
-            <div className="bg-white rounded-lg shadow-sm p-8">
-              {/* <div className="text-center mb-8">
-                <FileText className="w-12 h-12 text-blue-500 mx-auto mb-4" />
-              </div> */}
-
-              {/* PDF Viewer */}
-              <div className="bg-gray-50 border border-gray-300 rounded-lg w-full min-h-[70vh]">
+            <div className="bg-white rounded-lg shadow-lg p-4 md:p-8 border border-gray-100">
+              <div className="bg-gray-50 border border-gray-200 rounded-lg w-full min-h-[50vh]">
                 <iframe
                   src="/Shivam_Inter_IIT14_0 (1).pdf"
-                  className="w-full h-full min-h-[70vh]"
+                  className="w-full h-full min-h-[50vh]"
                   frameBorder="0"
                 >
                   <p className="p-4 text-center text-gray-600">
@@ -672,7 +713,7 @@ export default function PortfolioLayout() {
                 <a
                   href="/Shivam_Inter_IIT14_0 (1).pdf"
                   download="Shivam_Saxena_Resume.pdf"
-                  className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors flex items-center"
+                  className="bg-indigo-600 text-white px-6 py-3 rounded-lg hover:bg-indigo-700 transition-colors flex items-center shadow-md hover:shadow-lg"
                 >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -697,13 +738,13 @@ export default function PortfolioLayout() {
 
         {/* Achievements Section */}
         {activeSection === "achievements" && (
-          <div className="p-6 max-w-4xl mx-auto">
+          <div className="p-4 md:p-6 max-w-4xl mx-auto">
             <h1 className="text-2xl font-bold text-gray-800 mb-6">
               Achievements & Activities
             </h1>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="bg-white rounded-xl shadow-md p-6 hover:shadow-lg transition-shadow duration-300">
+              <div className="bg-white rounded-xl shadow-lg p-6 hover:shadow-xl transition-shadow duration-300 border border-gray-100">
                 <h2 className="text-xl font-semibold text-gray-800 mb-4 flex items-center">
                   <FileText className="w-5 h-5 mr-2 text-indigo-600" />
                   Certifications
@@ -767,7 +808,7 @@ export default function PortfolioLayout() {
                 </ul>
               </div>
 
-              <div className="bg-white rounded-xl shadow-md p-6 hover:shadow-lg transition-shadow duration-300">
+              <div className="bg-white rounded-xl shadow-lg p-6 hover:shadow-xl transition-shadow duration-300 border border-gray-100">
                 <h2 className="text-xl font-semibold text-gray-800 mb-4 flex items-center">
                   <User className="w-5 h-5 mr-2 text-indigo-600" />
                   Positions of Responsibility
