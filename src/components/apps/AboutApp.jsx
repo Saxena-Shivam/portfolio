@@ -57,7 +57,7 @@ export default function PortfolioLayout() {
   }, []);
 
   return (
-    <div className="min-h-screen h-screen bg-white flex flex-col md:flex-row">
+    <div className="min-h-screen bg-white flex flex-col md:flex-row">
       {/* Mobile Header */}
       <div className="md:hidden bg-gradient-to-r from-indigo-800 to-indigo-900 text-white p-4 flex items-center justify-between sticky top-0 z-20 shadow-lg">
         <button
@@ -120,7 +120,7 @@ export default function PortfolioLayout() {
       </div>
 
       {/* Main Content */}
-      <div className="flex-1 overflow-y-auto h-screen bg-white">
+      <div className="flex-1 overflow-y-auto bg-white">
         {/* About Section */}
         {activeSection === "about" && (
           <div className="p-4 md:p-6 max-w-4xl mx-auto">
