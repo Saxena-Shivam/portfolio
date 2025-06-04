@@ -44,14 +44,14 @@ export default function CameraApp() {
   };
 
   return (
-    <div className="h-full bg-black text-white flex">
+    <div className="h-full min-h-screen bg-black text-white flex flex-col md:flex-row">
       {/* Camera View */}
-      <div className="flex-1 relative">
+      <div className="flex-1 relative min-h-[320px]">
         {/* Camera Preview */}
         <div className="absolute inset-0 bg-gradient-to-br from-gray-800 to-gray-900 flex items-center justify-center">
           <div className="text-center">
-            <Camera className="w-24 h-24 mx-auto mb-4 text-gray-400" />
-            <p className="text-gray-400">Camera Preview</p>
+            <Camera className="w-20 h-20 md:w-24 md:h-24 mx-auto mb-4 text-gray-400" />
+            {/* <p className="text-gray-400">Camera Preview</p> */}
             <p className="text-sm text-gray-500 mt-2">
               {mode === "photo" ? "Photo Mode" : "Video Mode"}
             </p>
@@ -65,10 +65,10 @@ export default function CameraApp() {
         </div>
 
         {/* Controls Overlay */}
-        <div className="absolute bottom-0 left-0 right-0 p-6">
-          <div className="flex items-center justify-center space-x-8">
+        <div className="absolute bottom-0 left-0 right-0 p-4 md:p-6">
+          <div className="flex flex-col items-center gap-4 md:flex-row md:items-center md:justify-center md:space-x-8">
             {/* Mode Toggle */}
-            <div className="flex bg-black/50 rounded-full p-1">
+            <div className="flex bg-black/50 rounded-full p-1 mb-2 md:mb-0">
               <button
                 onClick={() => setMode("photo")}
                 className={`px-4 py-2 rounded-full text-sm transition-colors ${
@@ -111,7 +111,7 @@ export default function CameraApp() {
         </div>
 
         {/* Top Controls */}
-        <div className="absolute top-0 left-0 right-0 p-4 flex justify-between">
+        <div className="absolute top-0 left-0 right-0 p-2 md:p-4 flex justify-between">
           <button className="p-2 bg-black/50 rounded-full hover:bg-black/70 transition-colors">
             <RotateCcw className="w-5 h-5" />
           </button>
@@ -119,13 +119,13 @@ export default function CameraApp() {
       </div>
 
       {/* Gallery Sidebar */}
-      <div className="w-64 bg-gray-900 border-l border-gray-700">
+      <div className="w-full md:w-64 bg-gray-900 border-t md:border-t-0 md:border-l border-gray-700 flex-shrink-0">
         <div className="p-4 border-b border-gray-700">
           <h3 className="font-semibold">Gallery</h3>
           <p className="text-sm text-gray-400">{photos.length} items</p>
         </div>
 
-        <div className="p-4 space-y-3 overflow-y-auto">
+        <div className="p-4 grid grid-cols-3 md:grid-cols-1 gap-3 overflow-y-auto max-h-48 md:max-h-none">
           {photos.map((item) => (
             <div key={item.id} className="group relative">
               <div className="aspect-square bg-gray-800 rounded-lg overflow-hidden">
