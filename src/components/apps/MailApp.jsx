@@ -270,7 +270,7 @@ export default function ContactApp() {
             </form>
             {sent && (
               <div className="mt-4 text-green-600 font-semibold">
-                Message sent successfully!
+                Thanks for reaching Us
               </div>
             )}
           </div>
