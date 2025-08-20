@@ -1,7 +1,14 @@
 "use client";
-import { useLayoutEffect, useState, useRef, useEffect } from "react";
+import {
+  useLayoutEffect,
+  useState,
+  useRef,
+  useEffect,
+  useCallback,
+} from "react";
 import { useWindows } from "../contexts/WindowContext";
 import useIsMobile from "../hooks/useIsMobile.jsx";
+import { Minus, Square, X } from "lucide-react";
 
 export default function Window({ window: win }) {
   const {
@@ -34,19 +41,29 @@ export default function Window({ window: win }) {
     }
   };
 
-  const handleMouseMove = (e) => {
-    if (isDragging && !win.isMaximized && !isMobile) {
-      updateWindowPosition(win.id, {
-        x: e.clientX - dragOffset.x,
-        y: e.clientY - dragOffset.y,
-      });
-    }
-  };
+  const handleMouseMove = useCallback(
+    (e) => {
+      if (isDragging && !win.isMaximized && !isMobile) {
+        updateWindowPosition(win.id, {
+          x: e.clientX - dragOffset.x,
+          y: e.clientY - dragOffset.y,
+        });
+      }
+    },
+    [
+      isDragging,
+      win.isMaximized,
+      isMobile,
+      updateWindowPosition,
+      win.id,
+      dragOffset,
+    ]
+  );
 
-  const handleMouseUp = () => {
+  const handleMouseUp = useCallback(() => {
     setIsDragging(false);
     setIsResizing(false);
-  };
+  }, []);
 
   useEffect(() => {
     if (isDragging || isResizing) {
@@ -57,11 +74,7 @@ export default function Window({ window: win }) {
         document.removeEventListener("mouseup", handleMouseUp);
       };
     }
-  }, [isDragging, isResizing, dragOffset]);
-
-  if (win.isMinimized) {
-    return null;
-  }
+  }, [isDragging, isResizing, handleMouseMove, handleMouseUp]);
 
   useLayoutEffect(() => {
     function clampWindowToViewport() {
@@ -134,41 +147,44 @@ export default function Window({ window: win }) {
       className={`bg-white shadow-2xl overflow-hidden animate-slideIn flex flex-col ${
         isMobile ? "rounded-none" : "rounded-lg"
       }`}
-      style={windowStyle}
+      style={win.isMinimized ? { display: "none" } : windowStyle}
       onClick={() => focusWindow(win.id)}
     >
       {/* Window Header */}
       <div
-        className="window-header bg-gray-100 border-b border-gray-200 h-10 flex items-center justify-between px-2 sm:px-4 cursor-move select-none"
+        className="window-header bg-gray-100 border-b border-gray-200 h-10 flex items-center justify-between px-2 sm:px-4 select-none"
         onMouseDown={handleMouseDown}
         style={{
           touchAction: isMobile ? "none" : "auto",
           minHeight: 40,
         }}
       >
-        <div className="flex items-center space-x-2">
-          <div className="flex space-x-2">
-            <button
-              onClick={() => closeWindow(win.id)}
-              className="w-3 h-3 bg-red-500 rounded-full hover:bg-red-600 transition-colors"
-              aria-label="Close"
-            />
-            <button
-              onClick={() => minimizeWindow(win.id)}
-              className="w-3 h-3 bg-yellow-500 rounded-full hover:bg-yellow-600 transition-colors"
-              aria-label="Minimize"
-            />
-            <button
-              onClick={() => maximizeWindow(win.id)}
-              className="w-3 h-3 bg-green-500 rounded-full hover:bg-green-600 transition-colors"
-              aria-label="Maximize"
-            />
-          </div>
-        </div>
         <div className="text-xs sm:text-sm font-medium text-gray-700 flex-1 text-center truncate">
           {win.title}
         </div>
-        <div className="w-12 sm:w-16" /> {/* Spacer for centering */}
+        <div className="flex items-center space-x-2">
+          <button
+            onClick={() => minimizeWindow(win.id)}
+            className="px-2 py-1 text-black rounded hover:bg-gray-600 transition-colors"
+            aria-label="Minimize"
+          >
+            <Minus size={16} />
+          </button>
+          <button
+            onClick={() => maximizeWindow(win.id)}
+            className="px-2 py-1 text-black rounded hover:bg-gray-600 transition-colors"
+            aria-label="Maximize"
+          >
+            <Square size={14} />
+          </button>
+          <button
+            onClick={() => closeWindow(win.id)}
+            className="px-2 py-1 text-black rounded hover:bg-red-600 transition-colors"
+            aria-label="Close"
+          >
+            <X size={16} />
+          </button>
+        </div>
       </div>
 
       {/* Window Content */}

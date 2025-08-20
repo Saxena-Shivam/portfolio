@@ -17,84 +17,15 @@ export default function GitHubApp() {
   const [repositories, setRepositories] = useState([]);
   const [commits, setCommits] = useState([]);
   const [stats, setStats] = useState({
-    totalCommits: 267,
-    totalStars: 89,
-    totalForks: 27,
-    contributionsThisYear: 142,
+    totalCommits: 0,
+    totalStars: 0,
+    totalForks: 0,
+    contributionsThisYear: 0,
   });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  const username = "Saxena-Shivam"; // Replace with any GitHub username
-
-  // Fetch repositories from GitHub API
-  useEffect(() => {
-    const fetchRepositories = async () => {
-      try {
-        const response = await fetch(
-          `https://api.github.com/users/${username}/repos?sort=updated`
-        );
-        if (!response.ok) {
-          throw new Error("Failed to fetch repositories");
-        }
-        const data = await response.json();
-
-        // Transform GitHub API response to match our structure
-        const formattedRepos = data.map((repo) => ({
-          name: repo.name,
-          description: repo.description || "No description",
-          language: repo.language || "Unknown",
-          stars: repo.stargazers_count,
-          forks: repo.forks_count,
-          isPrivate: repo.private,
-          updatedAt: formatDate(repo.updated_at),
-          url: repo.html_url,
-        }));
-
-        setRepositories(formattedRepos);
-        setLoading(false);
-      } catch (err) {
-        setError(err.message);
-        setLoading(false);
-      }
-    };
-
-    fetchRepositories();
-  }, [username]);
-
-  // Fetch recent commits from GitHub API
-  useEffect(() => {
-    const fetchCommits = async () => {
-      if (repositories.length === 0) return;
-
-      try {
-        const commitPromises = repositories.slice(0, 6).map((repo) =>
-          fetch(`https://api.github.com/repos/${username}/${repo.name}/commits`)
-            .then((res) => res.json())
-            .then((commits) => ({
-              ...commits[0],
-              repository: repo.name,
-            }))
-        );
-
-        const commitData = await Promise.all(commitPromises);
-
-        const formattedCommits = commitData.map((commit) => ({
-          message: commit.commit.message.split("\n")[0],
-          hash: commit.sha.substring(0, 7),
-          author: commit.commit.author.name,
-          time: formatDate(commit.commit.author.date),
-          repository: commit.repository,
-        }));
-
-        setCommits(formattedCommits);
-      } catch (err) {
-        console.error("Error fetching commits:", err);
-      }
-    };
-
-    fetchCommits();
-  }, [repositories, username]);
+  const username = "Saxena-Shivam";
 
   // Format date to relative time
   const formatDate = (dateString) => {
@@ -114,6 +45,99 @@ export default function GitHubApp() {
     return `${Math.floor(diffInSeconds / 2592000)} months ago`;
   };
 
+  // Fetch all data from GitHub API
+  useEffect(() => {
+    const fetchGitHubData = async () => {
+      try {
+        setLoading(true);
+
+        // 1. Fetch user repositories
+        const reposResponse = await fetch(
+          `https://api.github.com/users/${username}/repos?per_page=100&sort=updated`
+        );
+        if (!reposResponse.ok) {
+          throw new Error("Failed to fetch repositories");
+        }
+        const reposData = await reposResponse.json();
+
+        // Calculate total stars and forks
+        const totalStars = reposData.reduce(
+          (sum, repo) => sum + repo.stargazers_count,
+          0
+        );
+        const totalForks = reposData.reduce(
+          (sum, repo) => sum + repo.forks_count,
+          0
+        );
+
+        // Transform repositories data
+        const formattedRepos = reposData.map((repo) => ({
+          name: repo.name,
+          description: repo.description || "No description",
+          language: repo.language || "Unknown",
+          stars: repo.stargazers_count,
+          forks: repo.forks_count,
+          isPrivate: repo.private,
+          updatedAt: formatDate(repo.updated_at),
+          url: repo.html_url,
+        }));
+
+        // 2. Fetch recent commits for the first 6 repositories
+        const commitPromises = formattedRepos.slice(0, 6).map(
+          (repo) =>
+            fetch(
+              `https://api.github.com/repos/${username}/${repo.name}/commits?per_page=1`
+            )
+              .then((res) => res.json())
+              .then((commits) => ({
+                ...commits[0],
+                repository: repo.name,
+              }))
+              .catch(() => null) // Ignore errors for individual commit fetches
+        );
+
+        const commitData = (await Promise.all(commitPromises)).filter(Boolean);
+
+        const formattedCommits = commitData.map((commit) => ({
+          message: commit.commit.message.split("\n")[0],
+          hash: commit.sha.substring(0, 7),
+          author: commit.commit.author.name,
+          time: formatDate(commit.commit.author.date),
+          repository: commit.repository,
+        }));
+
+        // 3. Estimate total commits (approximate)
+        const totalCommits = formattedRepos.length * 30; // Rough estimate
+
+        // 4. Fetch contribution data from public events
+        const eventsResponse = await fetch(
+          `https://api.github.com/users/${username}/events/public`
+        );
+        const eventsData = await eventsResponse.json();
+        const contributionsThisYear = eventsData.filter((event) => {
+          const eventDate = new Date(event.created_at);
+          return eventDate.getFullYear() === new Date().getFullYear();
+        }).length;
+
+        // Update all state
+        setRepositories(formattedRepos);
+        setCommits(formattedCommits);
+        setStats({
+          totalCommits,
+          totalStars,
+          totalForks,
+          contributionsThisYear,
+        });
+        setLoading(false);
+      } catch (err) {
+        setError(err.message);
+        setLoading(false);
+      }
+    };
+
+    fetchGitHubData();
+  }, [username]);
+
   if (loading) {
     return (
       <div className="min-h-screen bg-white flex items-center justify-center">
@@ -130,7 +154,7 @@ export default function GitHubApp() {
       <div className="min-h-screen bg-white flex items-center justify-center">
         <div className="bg-red-50 border border-red-200 rounded-lg p-6 max-w-md mx-4">
           <h3 className="text-lg font-medium text-red-800 mb-2">
-            Turn On Your Internet
+            Error Loading Data
           </h3>
           <p className="text-red-700 mb-4">{error}</p>
           <button
@@ -189,14 +213,14 @@ export default function GitHubApp() {
           <div className="p-6">
             <div className="flex flex-col items-center">
               <div className="w-20 h-20 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white text-2xl font-bold mb-4">
-                SS
+                {username.substring(0, 2).toUpperCase()}
               </div>
 
               <h2 className="text-xl font-bold text-gray-800 text-center">
-                Shivam Saxena
+                {username}
               </h2>
               <p className="text-gray-600 text-center mt-2 text-sm">
-                Full Stack Developer at IIT Bhubaneswar
+                GitHub Profile
               </p>
             </div>
 
@@ -245,12 +269,10 @@ export default function GitHubApp() {
           <div className="md:hidden p-4 border-b border-gray-200">
             <div className="flex items-center space-x-4">
               <div className="w-14 h-14 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white text-xl font-bold">
-                SS
+                {username.substring(0, 2).toUpperCase()}
               </div>
               <div>
-                <h2 className="text-lg font-bold text-gray-800">
-                  Shivam Saxena
-                </h2>
+                <h2 className="text-lg font-bold text-gray-800">{username}</h2>
                 <button
                   onClick={() =>
                     window.open(`https://github.com/${username}`, "_blank")
@@ -495,46 +517,20 @@ export default function GitHubApp() {
                     Recent Activity
                   </h4>
                   <div className="space-y-3">
-                    <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm">
-                      <GitBranch className="w-4 h-4 text-green-500 flex-shrink-0" />
-                      <span className="flex-1 min-w-[200px]">
-                        Created branch{" "}
-                        <code className="bg-gray-100 px-1 rounded text-xs sm:text-sm">
-                          feature/auth-improvements
-                        </code>{" "}
-                        in <strong>UniCom</strong>
-                      </span>
-                      <span className="text-gray-500 text-xs sm:text-sm">
-                        3 days ago
-                      </span>
-                    </div>
-                    <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm">
-                      <GitCommit className="w-4 h-4 text-blue-500 flex-shrink-0" />
-                      <span className="flex-1 min-w-[200px]">
-                        Pushed 2 commits to <strong>Rental-Booking</strong>
-                      </span>
-                      <span className="text-gray-500 text-xs sm:text-sm">
-                        5 days ago
-                      </span>
-                    </div>
-                    <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm">
-                      <Star className="w-4 h-4 text-yellow-500 flex-shrink-0" />
-                      <span className="flex-1 min-w-[200px]">
-                        Starred <strong>vercel/next.js</strong>
-                      </span>
-                      <span className="text-gray-500 text-xs sm:text-sm">
-                        1 week ago
-                      </span>
-                    </div>
-                    <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm">
-                      <GitFork className="w-4 h-4 text-purple-500 flex-shrink-0" />
-                      <span className="flex-1 min-w-[200px]">
-                        Forked <strong>shadcn-ui/ui</strong>
-                      </span>
-                      <span className="text-gray-500 text-xs sm:text-sm">
-                        2 weeks ago
-                      </span>
-                    </div>
+                    {commits.slice(0, 4).map((commit, index) => (
+                      <div
+                        key={index}
+                        className="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm"
+                      >
+                        <GitCommit className="w-4 h-4 text-blue-500 flex-shrink-0" />
+                        <span className="flex-1 min-w-[200px]">
+                          Pushed commit to <strong>{commit.repository}</strong>
+                        </span>
+                        <span className="text-gray-500 text-xs sm:text-sm">
+                          {commit.time}
+                        </span>
+                      </div>
+                    ))}
                   </div>
                 </div>
               </div>
