@@ -163,23 +163,27 @@ export default function Window({ window: win }) {
           {win.title}
         </div>
         <div className="flex items-center space-x-2">
-          <button
-            onClick={() => minimizeWindow(win.id)}
-            className="px-2 py-1 text-black rounded hover:bg-gray-600 transition-colors"
-            aria-label="Minimize"
-          >
-            <Minus size={16} />
-          </button>
-          <button
-            onClick={() => maximizeWindow(win.id)}
-            className="px-2 py-1 text-black rounded hover:bg-gray-600 transition-colors"
-            aria-label="Maximize"
-          >
-            <Square size={14} />
-          </button>
+          {!isMobile && (
+            <>
+              <button
+                onClick={() => minimizeWindow(win.id)}
+                className="px-2 py-1 text-black rounded hover:bg-gray-600 transition-colors"
+                aria-label="Minimize"
+              >
+                <Minus size={16} />
+              </button>
+              <button
+                onClick={() => maximizeWindow(win.id)}
+                className="px-2 py-1 text-black rounded hover:bg-gray-600 transition-colors"
+                aria-label="Maximize"
+              >
+                <Square size={16} />
+              </button>
+            </>
+          )}
           <button
             onClick={() => closeWindow(win.id)}
-            className="px-2 py-1 text-black rounded hover:bg-red-600 transition-colors"
+            className="px-2 py-1 text-black rounded hover:bg-gray-600 transition-colors"
             aria-label="Close"
           >
             <X size={16} />
